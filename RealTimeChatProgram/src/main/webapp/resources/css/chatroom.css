@@ -1,0 +1,10 @@
+@charset "UTF-8";
+
+body {
+
+    background-image: url("/chat/images/chat.png"); /* 배경 이미지 */
+    background-repeat: no-repeat;   /* 배경 채울 때 사진 여러개 반복되지 않게 설정 */
+    background-size: 100% 250%;    /* 사진의 가로 세로 비율 맞추기*/
+
+    position: relative;
+}

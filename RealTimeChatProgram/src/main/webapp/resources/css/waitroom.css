@@ -1,0 +1,136 @@
+@charset "UTF-8";
+
+body {
+
+    background-image: url("/chat/images/chat.png"); /* 배경 이미지 */
+    background-repeat: no-repeat;   /* 배경 채울 때 사진 여러개 반복되지 않게 설정 */
+    background-size: 100% 120%;    /* 사진의 가로 세로 비율 맞추기*/
+
+    position: relative;
+}
+
+/* 상단 메뉴 조정, 메인화면 이동 버튼, 방 생성 버튼, 닉네임 표시 UI */
+.menu{
+
+    text-align: center;
+}
+
+/* CSS */
+.pageindex, .createroom {
+    border : 3px solid goldenrod;
+    border-radius: 5px;
+    background-color: yellow;
+    display : inline-block;
+    width: 20%;
+    height: 50px;
+    margin-right: 2%;
+    font-size: 15px;
+    font-weight: bold;
+    position: relative;
+    left : -12%;
+    transition: transform 0.3s ease-in-out; /* 마우스 오버 효과를 위한 transition 추가 */
+}
+
+.pageindex:hover, .createroom:hover {
+    transform: scale(1.1); /* 마우스를 올렸을 때 버튼 크기를 10% 증가 */
+    background-color: #b7e697; /* 마우스를 올렸을 때 배경색을 진한 녹색으로 변경 */
+}
+
+.shownickname {
+    display : inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    border : 3px solid blue;
+    background-color : skyblue;
+    width: 10%;
+    height: 40px;
+    position: relative;
+    top : -1px;
+    font-size: 15px;
+    font-weight: bold;
+    color: white; /* 텍스트 색상을 흰색으로 변경 */
+}
+
+#nickname {
+    display : inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    border : 3px solid gray;
+    background-color : white;
+    width: 20%;
+    height: 40px;
+    position: relative;
+    top : 15px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #4c91af; /* 텍스트 색상을 진한 녹색으로 변경 */
+}
+
+.shownickname, #nickname {
+
+    left : 12%;
+}
+
+/* 각 방 별, 방 번호, 방 제목, 참여 인원 수*/
+.roominfo {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 99%;
+    height: 50px;
+    
+    position: relative;
+    left: 5px;
+}
+
+.roomnumber, .roomtitle, .people{
+
+    display: inline-flex;
+
+    border: 2px solid blue;
+    border-radius: 5px;
+    background-color: skyblue;
+
+    height: 100%;
+
+    justify-content: center;
+    align-items: center;
+
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.roomnumber {
+
+    width: 10%;
+}
+
+.roomtitle {
+
+    width: 58%;
+}
+
+.people{
+
+    width: 30%;
+}
+
+.roomlist {
+
+    background-color: #F5F5F5;
+    border: 3px solid slategray;
+    border-radius: 5px;
+
+
+    height: 770px;
+    width: 92%;
+
+    position: relative;
+    top: 15px;
+    left: 4px;
+   
+}

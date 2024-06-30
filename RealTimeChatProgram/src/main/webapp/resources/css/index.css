@@ -1,0 +1,125 @@
+@charset "UTF-8";
+
+body {
+
+    background-image: url("/chat/images/chat.png"); /* 배경 이미지 */
+    background-repeat: no-repeat;   /* 배경 채울 때 사진 여러개 반복되지 않게 설정 */
+    background-size: 100% 250%;    /* 사진의 가로 세로 비율 맞추기*/
+
+    position: relative;
+}
+
+/* h1 : 제목*/
+.titles {
+    position : absolute;
+    left: 40%;
+    top : 25px;
+
+    border-radius: 5px;
+    border: 5px solid blue;
+
+    background-color: skyblue;
+
+    font-size: 50px;
+    color: white;
+
+    padding: 20px;
+}
+
+/* information : 전체 채팅방 개수 및 전체 사용 인원 */
+/* information : 전체 채팅방 개수 및 전체 사용 인원 */
+.information {
+    width: 30%; 
+    position: relative;
+    top : 250px;
+    left: 32%;
+    transform: translateX(20%);
+    text-align: center;
+
+    border-radius: 10px; /* 모서리를 둥글게 만듦 */
+    padding: 20px; /* 패딩 추가 */
+
+    height: 70%;
+}
+
+label, span {
+    display: inline-block;
+    border-radius: 10px;
+    padding : 20px;
+    text-align: center;
+    color: black; /* 텍스트 색상을 흰색으로 변경 */
+}
+
+label {
+    border: 4px solid gray;
+    background-color: yellow;
+    height: 100%;
+    width : 200px;
+}
+
+span {
+    border: 4px solid gray;
+    background-color: white;
+    position: relative;
+    top: 25px;
+    height: 20px;
+    width: 25%;
+}
+
+/* 사용자 입력 닉네임 */
+.inputnickname {
+    width: 40%;
+    position: relative;
+    top : 250px;
+    left : 42%;
+    border-radius: 10px; /* 모서리를 둥글게 만듦 */
+   
+}
+
+.nicklable {
+    background-color: orange;
+}
+
+#nickname {
+    position: relative;
+    top : -3px;
+    height: 30px;
+    width: 30%;
+    border-radius: 5px; /* 모서리를 둥글게 만듦 */
+    text-align: center;
+    padding: 15px 0;
+    color: white; /* 텍스트 색상을 흰색으로 변경 */
+    background-color: white; /* 배경색을 찐한 노란색으로 변경 */
+}
+
+
+button {
+    position: relative;
+    top : 320px;
+    left : 42%;
+
+    height: 50px;
+    width: 25%;
+
+    /* 버튼의 배경색을 변경 */
+    background-color: #4CAF50; 
+
+    /* 텍스트의 색상을 변경*/
+    color: white; 
+
+    /* 테두리를 제거합니다 */
+    border: none; 
+
+    /* 텍스트의 크기를 변경 */
+    font-size: 20px; 
+
+    /* 버튼에 마우스를 올렸을 때의 스타일을 정의 */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button:hover {
+    /* 버튼에 마우스를 올렸을 때의 배경색을 변경 */
+    background-color: #45a049;
+}
+
