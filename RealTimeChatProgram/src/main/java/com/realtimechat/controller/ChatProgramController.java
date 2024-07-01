@@ -29,5 +29,12 @@ public class ChatProgramController {
 		
 		return "chatroom";
 	}
+	
+	/* "waitroom.jsp" 에서 선택 한 방으로 입장 위한 페이지 처리 컨트롤러 메소드 */
+	@RequestMapping(value="/createroom", method = RequestMethod.GET)
+	public String createroomPage() {
+		
+		return "createroom";
+	}
 		
 }
