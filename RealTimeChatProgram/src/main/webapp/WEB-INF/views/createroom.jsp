@@ -6,31 +6,33 @@
 <meta charset="UTF-8">
 <title>방 생성 화면</title>
 	<link rel="stylesheet" type="text/css" href="/chat/css/createroom.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
 </head>
 <body>
 	<button id="exitroom">채팅 대기방 이동</button>
 	
 	<!-- 방 생성 시 입력 정보인 방 제목 및 최대 인원 수 -->
-	<div class="inforoom">
+
+	<form action="./roomcreate" id="reg_frm" method="POST" class="inforoom">
 		<label class ="title" for="title">방 제목</label>
-			<input type="text" id="title"></input><br><br>
+			<input type="text" id="title" name="title"></input><br><br>
 		<label class="people" for="people">최대 인원 수</label>
-			<select name="people" id="people">
-			  <option value="1">1</option>
-			  <option value="2">2</option>
-			  <option value="3">3</option>
-			  <option value="4">4</option>
-			  <option value="5">5</option>
-			  <option value="6">6</option>
-			  <option value="7">7</option>
-			  <option value="8">8</option>
-			  <option value="9">9</option>
-			  <option value="10">10</option>
+			<select name="people" id="people" name="people">
+			  <option value=1>1</option>
+			  <option value=2>2</option>
+			  <option value=3>3</option>
+			  <option value=4>4</option>
+			  <option value=5>5</option>
+			  <option value=6>6</option>
+			  <option value=7>7</option>
+			  <option value=8>8</option>
+			  <option value=9>9</option>
+			  <option value=10>10</option>
 			</select>
+	</form>
 			
-	</div>
-	
 	<button id="createroom">방 생성</button>
-	
+	<script src="./js/createroom.js" type="text/javascript"></script>
 </body>
+	
 </html>
