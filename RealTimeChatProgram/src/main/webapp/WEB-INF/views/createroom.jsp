@@ -27,6 +27,7 @@
 			  <option value="9">9</option>
 			  <option value="10">10</option>
 			</select>
+			
 	</div>
 	
 	<button id="createroom">방 생성</button>
