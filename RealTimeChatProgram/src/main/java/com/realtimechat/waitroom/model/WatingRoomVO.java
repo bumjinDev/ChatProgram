@@ -5,6 +5,7 @@ public class WatingRoomVO {
 	private int roomNumber;
 	private String roomTitle;
 	private int roomUsers; 
+	private int maxPeople;
 	
 	public void setroomNumber(int roomNumber) {
 		
@@ -16,6 +17,9 @@ public class WatingRoomVO {
 	public void setroomUsers(int roomUsers) {
 		this.roomUsers = roomUsers;
 	};
+	public void setmaxPeople(int maxPeople) {
+		this.maxPeople = maxPeople;
+	};
 	public int getroomNumber() {
 		return this.roomNumber;
 	};
@@ -23,6 +27,9 @@ public class WatingRoomVO {
 		return this.roomTitle;
 	};
 	public int getroomUser() {
-		return roomUsers;
+		return this.roomUsers;
+	};
+	public int getmaxPeople() {
+		return this.maxPeople;
 	};
 }

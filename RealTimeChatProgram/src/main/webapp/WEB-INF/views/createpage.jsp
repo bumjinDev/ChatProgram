@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%  %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,11 +14,11 @@
 	
 	<!-- 방 생성 시 입력 정보인 방 제목 및 최대 인원 수 -->
 
-	<form action="./roomcreate" id="reg_frm" method="POST" class="inforoom">
+	<form action="./createChatRoom" id="reg_frm" method="POST" class="inforoom">
 		<label class ="title" for="title">방 제목</label>
-			<input type="text" id="title" name="title"></input><br><br>
+			<input type="text" id="title" name="roomName"></input><br><br>
 		<label class="people" for="people">최대 인원 수</label>
-			<select name="people" id="people" name="people">
+			<select id="people" name="roomMax">
 			  <option value=1>1</option>
 			  <option value=2>2</option>
 			  <option value=3>3</option>
