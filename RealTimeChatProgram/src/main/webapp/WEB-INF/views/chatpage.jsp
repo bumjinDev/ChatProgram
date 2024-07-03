@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<% 
+	String nickName = (String) request.getAttribute("nickName");
+	int currentPeople = (Integer) request.getAttribute("currentPeople");
+	int roomNumber = (Integer) request.getAttribute("roomNumber");
+%>
 
 <!DOCTYPE html>
 <html>
@@ -12,11 +17,11 @@
 	<!-- 닉네임 표시, 채팅 방 나가기 버튼, 참여 인원 수 표시, 방 번호 표시 -->
 	<div class="menu">
 		<label for="roomnumber">방 번호</label>
-			<span id="roomnumber">-</span>
+			<span id="roomnumber"><%=roomNumber %></span>
 		<label for="chatpeopen">참여 인원 수</label>
-			<span id="nickanme">-</span>
+			<span id="nickanme"><%=currentPeople %></span>
 		<label for="nickname">닉네임</label>	
-			<span id="chatpeopen">-</span>
+			<span id="chatpeopen"><%=nickName %></span>
 		<button id="exitchat">채팅 방 나가기</button>
 	</div>
 	<!-- 실제 채팅 입력 및 유저 간 채팅 내역 공유 창 -->

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<!-- jstl 구현 : 컨트롤러 메소드 'loadWaitPage()' 에서 채팅 방 목록을 List로써 반환 받아 랜더링 할 때에 
+		'c:forEach' 적용해서 순차적으로 랜더링 하기 위함. -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +27,11 @@
 	
 	<!--  채팅 방 목록 -->
 	<div class="roomlist">
-		
+		<c:forEach var="item" items="${items}">
+		    <!-- 여기에 각 항목을 처리하는 코드를 작성합니다. -->
+		    <span>${item}</span> <span>${item}</span> <span>${item}</span> <button>입장 </button>
+		    <br/>
+		</c:forEach>
 	</div>
 </body>
 </html>

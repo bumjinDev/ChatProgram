@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,19 +22,44 @@ public class ChatRepo implements IChatRepo{
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
+	/* 웹 어플리케이션 재 실행 시 현재 채팅 방 목록은 초기화로 진행.(log 테이블인 'RooMLogtbl' 은 상관 없음.) */
+	@PostConstruct
+	void init() {
+		
+		String sql = "delete from watingroomtbl";
+		jdbcTemplate.update(sql);
+	}
+	
 	/* roomNumbers : 유저들이 방 생성 시 마다 방 번호 리스트를 가지고 있어 중복된 방 번호 생성 방지 및 모든 요청 시 마다 테이블 조회하는 리소스 및 시간 절감 목적. */
 	static List<Integer> roomNumbers = new ArrayList<Integer>();
 	
+	/* getMain() : MainPageService.loadMainInofo() 에서 전체 채팅 방 개수 및 전체 채팅 방 내 사용자 수 측정해서 반환. */
 	@Override
 	public MainPageVO getMain() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String roomTotalsql = "SELECT COUNT(*) FROM watingroomtbl";
+		
+		/* 전체 채팅 방 개수 반환 */
+		MainPageVO mainPageVO = new MainPageVO();
+		mainPageVO.setTotalRoom(jdbcTemplate.queryForObject(roomTotalsql, Integer.class));
+		
+		/* 전체 채팅 방 내 전체 사용자 수 반환, 만약 현재 채팅 방이 없으면 NullPointException 방생하므로 0 처리 */
+		String userTotalsql = "SELECT SUM(CURRENTPEOPLE) FROM WATINGROOMTBL";
+		try {
+			mainPageVO.setTotalUser(jdbcTemplate.queryForObject(userTotalsql, Integer.class));
+		} catch(Exception NullPointerException) {
+			mainPageVO.setTotalUser(0);
+		}
+		
+		return mainPageVO;
 	}
 
+	/* getWatingRoom() : 메인 페이지 'index.jsp' 에서 닉네임 입력 후 채팅 서비스 시작함으로써 채팅 대기방 페이지 내 포함될 채팅방 목록을 제공 목적 */
 	@Override
-	public WatingRoomVO getWatingRoom() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<WatingRoomVO> getWatingRoom() {
+		
+		String query = "select * from watingroomtbl";
+		return jdbcTemplate.query(query, new watingRoomRowMapper());
 	}
 
 	@Override

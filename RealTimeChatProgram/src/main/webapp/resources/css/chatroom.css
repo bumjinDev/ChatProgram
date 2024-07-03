@@ -29,14 +29,14 @@ body {
     border-radius: 5px;
     background-color: yellow;
     display : inline-block;
-    width: 5%;
+    width: 12%;
     height: 50px;
     margin-right: 2%;
     font-size: 15px;
     font-weight: bold;
     position: relative;
 
-    width: 12%;
+    
 
     text-align: center; /* 글자를 가운데로 정렬 */
     line-height: 50px; /* 글자를 수직 중앙으로 정렬 */
