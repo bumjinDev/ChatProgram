@@ -2,6 +2,9 @@ package com.realtimechat.waitroom.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.realtimechat.dao.ChatRepo;
@@ -11,12 +14,13 @@ import com.realtimechat.waitroom.model.WatingRoomVO;
 @Service
 public class WatingRoomService implements IWatingRoomService{
 	
+	@Autowired
 	ChatRepo chatRepo;
 
 	/* 전체 채팅 방 목록을 조회 후 반환한다. */
 	@Override
 	public List<WatingRoomVO> loadWatingRoom() {
-		
+		System.out.println("loadWatingRoom() 호출");
 		return chatRepo.getWatingRoom();
 	}
 }

@@ -1,8 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!-- jstl 구현 : 컨트롤러 메소드 'loadWaitPage()' 에서 채팅 방 목록을 List로써 반환 받아 랜더링 할 때에 
-		'c:forEach' 적용해서 순차적으로 랜더링 하기 위함. -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%
+	String nickName = (String)request.getAttribute("nickName");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,24 +15,27 @@
 
 	<!-- 메뉴 : 메인 화면 이동 버튼, 방 생성 버튼, 닉네임 확인. -->
 	<div class="menu">
-		<button class="pageindex">메인 화면 이동</button>
-		<button class="createroom">방 생성</button>
-		<label class="shownickname" for="shownickname">닉네임</label>
-		<span id="nickname"></span><br>	<!-- 사용자 입력 정보를 세션 객체 통해 불러들인다. -->
+		<button class="pageindex" id="pageindex">메인 화면 이동</button>
+		<button class="createroom" id="createroom">방 생성</button>
+		<label class="shownickname" for="nickname">닉네임</label>
+		<span id="nickname"><%=nickName %></span><br>	<!-- 사용자 입력 정보를 세션 객체 통해 불러들인다. -->
 	</div>
 	<br>
 	<!-- 방 정보 표현 -->
 	<div class="roominfo">
-		<span class="roomnumber">방 번호</span><span class="roomtitle">방 제목</span><span class="people">참여 인원 수</span>
+		<span class="roomNumber">방 번호</span><span class="roomTitle">방 제목</span><span class="roomPeople">참여 인원 / 최대 인원</span>
 	</div>
 	
-	<!--  채팅 방 목록 -->
+	<!--  채팅 방 목록, 방 순서대로 각 방 별 방 번호, 방 제목, 방 내 현재 인원수를 -->
 	<div class="roomlist">
-		<c:forEach var="item" items="${items}">
-		    <!-- 여기에 각 항목을 처리하는 코드를 작성합니다. -->
-		    <span>${item}</span> <span>${item}</span> <span>${item}</span> <button>입장 </button>
-		    <br/>
+		<c:forEach var="loadWaitRoom" items="${loadWaitRooms}" varStatus="status">
+			<div class="roomEntity">
+			    <span id ="${status.count}" class="Number" >${loadWaitRoom.roomNumber}</span> <span class="Title">${loadWaitRoom.roomTitle}</span> <span class="People">${loadWaitRoom.currentPeople} / ${loadWaitRoom.maxPeople}</span>
+		    	<button class="entranceBtn" value="${loadWaitRoom.roomNumber}">입장</button>	<!-- 입장 버튼 누르면 각 버튼 별 속성 'value' 값 따른 입장 요청 -->
+		    </div>
 		</c:forEach>
 	</div>
+
+	<script src="./js/waitjs.js" type="text/javascript"></script>
 </body>
 </html>

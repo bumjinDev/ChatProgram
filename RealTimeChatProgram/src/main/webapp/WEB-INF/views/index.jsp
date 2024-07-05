@@ -25,17 +25,17 @@
 	</div>
 	<br><br>
 	
-	<form id="startChat" method="POST" action="./createChatRoom"> <!-- 채팅 대기방 페이지 단순 요청이니 'GET' 사용 -->
+	<form id="startChat" method="GET" action="./loadWaitPage">  <!-- 채팅 대기방 페이지 단순 요청이니 'GET' 사용 -->
 		<!-- 사용자 입력 닉네임 받아들이는 항목 -->
 		<div class = "inputnickname">
-			<label class="nicklable" for="nicklabel">사용할 닉네임</label>
 			<!-- 채팅 대기방 페이지 'waitpage.jsp' 요청 시 닉네임을 해당 HTTPRequest 세션 객체 내 속성 값으로 저장하며
 				 해당 페이지 내 닉네임 정보 포함하여 'waitpage.jsp' 랜더링 제공. -->
+			<label class="nicklable" for="nickname">사용할 닉네임</label>
 			<input name="nickName" type="text" id="nickname" ></input>	
 		</div>
 	</form>
 	
 	<button id="startBtn">실시간 채팅 시작하기</button>
-	
+	<script src="./js/index.js" type="text/javascript"></script>
 </body>
 </html>

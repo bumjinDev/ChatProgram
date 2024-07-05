@@ -1,6 +1,6 @@
 package com.realtimechat.chatroom.model;
 
-public class ChatValueVO {
+public class ChatCommunicationServiceVO {
 	private String userName;
 	private String userChat;
 	

@@ -4,9 +4,11 @@
  */
  var createroom;
 
+ 
  window.onload = function(){
 
-    createroom = document.getElementById("createroom");
+    var exitroom = document.getElementById("exitroom");
+    createroom = document.getElementById("createroom"); 
 
     createroom.addEventListener("click", function() {
 
@@ -28,6 +30,11 @@
       }
     });
     
+    exitroom.addEventListener("click", function(){
+
+        window.location.href = "./loadWaitPage";
+    });
+
  };
 
  

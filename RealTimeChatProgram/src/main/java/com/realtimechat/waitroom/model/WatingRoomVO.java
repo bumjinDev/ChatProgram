@@ -4,32 +4,32 @@ public class WatingRoomVO {
 	
 	private int roomNumber;
 	private String roomTitle;
-	private int roomUsers; 
+	private int currentPeople; 
 	private int maxPeople;
 	
-	public void setroomNumber(int roomNumber) {
+	public void setRoomNumber(int roomNumber) {
 		
 		this.roomNumber = roomNumber;
 	};
-	public void setroomTitle(String roomTitle) {
+	public void setRoomTitle(String roomTitle) {
 		this.roomTitle = roomTitle;
 	};
-	public void setroomUsers(int roomUsers) {
-		this.roomUsers = roomUsers;
+	public void setCurrentPeople(int roomUsers) {
+		this.currentPeople = roomUsers;
 	};
-	public void setmaxPeople(int maxPeople) {
+	public void setMaxPeople(int maxPeople) {
 		this.maxPeople = maxPeople;
 	};
-	public int getroomNumber() {
+	public int getRoomNumber() {
 		return this.roomNumber;
 	};
-	public String getroomTitle() {
+	public String getRoomTitle() {
 		return this.roomTitle;
 	};
-	public int getroomUser() {
-		return this.roomUsers;
+	public int getCurrentPeople() {
+		return this.currentPeople;
 	};
-	public int getmaxPeople() {
+	public int getMaxPeople() {
 		return this.maxPeople;
 	};
 }
