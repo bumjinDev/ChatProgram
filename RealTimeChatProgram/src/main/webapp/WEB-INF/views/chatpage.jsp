@@ -32,7 +32,7 @@
 		<div class="showscreen">
 			<div class="shownickname">	<!-- 채팅 입력한 사용자 닉네임 -->
 			</div>
-			<div class="showcontent">	<!-- 각 닉네임 별 입력한 사용자 명 -->
+			<div class="showcontent">	<!-- 각 닉네임 별 입력한 채팅 내용. -->
 			</div>
 		</div>
 		<!-- 실제 입력하는 부분 -->
@@ -40,6 +40,7 @@
 			<input type="text" id="inputchat"></input><button class="chatbtn">채팅 입력</button>
 		</div>
 	</div>
-	<script src="../js/chatpage.js" type="text/javascript"></script>
+	<script src="../js/chatpage.js" type="text/javascript"></script>		<!-- 단순 방 나가기 등 버튼 구현 -->
+	<script src="../js/chatPlay.js" type="text/javascript"></script><!-- webSocket 을 활용한 실시간 채팅 페이지 구현. -->
 </body>
 </html>

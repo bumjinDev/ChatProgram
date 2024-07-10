@@ -9,7 +9,9 @@
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>
 		<java-version>11</java-version>
-		<org.springframework-version>3.1.1.RELEASE</org.springframework-version>
+		<!-- 자바 웹 소켓을 사용하기 위한 버전 업그레이드 -->
+		 <org.springframework-version>4.3.25.RELEASE</org.springframework-version>
+		<!-- <org.springframework-version>3.1.1.RELEASE</org.springframework-version>  -->
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
@@ -152,7 +154,13 @@
 		    <artifactId>ojdbc8</artifactId>
 		    <version>23.4.0.24.05</version>
 		</dependency>
-				
+		
+		<!-- webSocket 위한 라이브러리 추가 -->
+		<dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-websocket</artifactId>
+	        <version>4.3.25.RELEASE</version> <!-- Spring의 적절한 버전으로 변경하세요 -->
+	    </dependency>
 		
 	</dependencies>
     <build>
