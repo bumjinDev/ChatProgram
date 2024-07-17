@@ -68,7 +68,6 @@ public class ChatRepo implements IChatRepo{
 	@Override
 	public void inputChatValue(String chatValue, int roomNumber) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* createRoom : 채팅 방 생성 요청 메소드 (메소드 'getChatRoom' 에서 조회수 증가하므로 현재 메소드에서는 작업하지 않음.)*/
@@ -89,7 +88,7 @@ public class ChatRepo implements IChatRepo{
 	
 	
 	/* 컨트롤러 메소드 'loadChatPage' 에서 요청 따라 해당 채팅 방에 접속 요청 시 "방의 현재 채팅 참여 인원수"를 증가 및 조회.
-	 * 해당 로직은 방 생성 및 생성 된 방에 대해서 공통으로 적용되어 채팅 방 접속 가능 여부 판단한다. */
+	 * 가장 중요한 점은  */
 	@Override
 	public ChatRoomPeopleVO getChatRoom(int roomNumber) {
 		
@@ -100,13 +99,18 @@ public class ChatRepo implements IChatRepo{
 		List<Map<String, Object>> users = jdbcTemplate.queryForList(selectRoom, new Object[] {roomNumber});
 		
 		/* 현재 요청한 인원수를 받아도 괜찮다면 진행 */
+		System.out.println("현재 요청한 방이 실제로 있나요 ? : " + users.size());
 		if(Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString())+1 <= Integer.parseInt(users.get(0).get("MAXPEOPLE").toString())){
-			/* 요청 받은 채팅 페이지인 "chatPage" 내 표현될 'roomNumber' 번호에 해당하는 방 내 조회수 증가 */
-			String peopleSql = "update waitingroomtbl set CURRENTPEOPLE = CURRENTPEOPLE + 1 where ROMNUM = ?";
-			jdbcTemplate.update(peopleSql, new Object[] {roomNumber});
+			
+			/* 클라이언트 브라우저 내 랜더링 직후 websocket 이 만약에 생성 안될 시 해당 레포지토리에서 다시 -1 을 해야 하므로 현재 레포지토리에서는 현재 접속자 수에 대한 추가를 하지 않고 
+			 * 이후 Websocket 세션 생성이 올바르게 된다면 "MyWebSocekt" 핸들러 내 에서 dbms 를 직접  */
+
+//			/* 요청 받은 채팅 페이지인 "chatPage" 내 표현될 'roomNumber' 번호에 해당하는 방 내 조회수 증가 */
+//			String peopleSql = "update waitingroomtbl set CURRENTPEOPLE = CURRENTPEOPLE + 1 where ROMNUM = ?";
+//			jdbcTemplate.update(peopleSql, new Object[] {roomNumber});
 		
 			/* 요청 받은 방 번호를 기준으로 해당 방 내 채팅 참여 인원수 및 성공 boolean 저장 후 반환 */
-			chatRoomPeopleVO.setRoomPeople((Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString())+1));		// 참여 인원수 1 증가
+//			chatRoomPeopleVO.setRoomPeople((Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString())+1));		// 참여 인원수 1 증가
 			chatRoomPeopleVO.setIsAllowed(true);												// 결과 값 참으로 변경
 		}
 		/* 현재 요청한 인원수를 받으면 안된다면 false 입력. 진행 */
@@ -117,6 +121,14 @@ public class ChatRepo implements IChatRepo{
 		return chatRoomPeopleVO;
 	}
 
+	/* 채팅 방 입장 시 세션 객체 증가되므로 이에 따라 해당 방 내 현재 이용자 갱신. */
+	@Override
+	public void updateCurrentUser(int roomNumber, int currentUsers) {
+		
+		String updateCurrentUsers = "update waitingroomtbl set CURRENTPEOPLE = ? where ROMNUM = ?";
+		jdbcTemplate.update(updateCurrentUsers, new Object[] {currentUsers, roomNumber});
+	}
+	
 	@Override
 	public ChatCommunicationServiceVO outputChatValue() {
 		// TODO Auto-generated method stub
@@ -128,20 +140,22 @@ public class ChatRepo implements IChatRepo{
 	@Override
 	public void exitChatPage(int roomNumber) {
 		
+		/* 기존 방 인원 수 감소 로직은 WebSocket Handler 내 'afterConnectionClosed' 통해서 각 방 별 세션 객체 종료 후 직접 레포지토리 내 별도의 메소드(별도의 방 개수 감소 메소드)를
+		 * 호출하여 해당 방 번호로 감소를 한다. */
 		/* 방 인원 수 감소 */
-		String decreaseSql = "update waitingroomtbl set CURRENTPEOPLE = CURRENTPEOPLE - 1 where ROMNUM = ?";
-		jdbcTemplate.update(decreaseSql, new Object[] {roomNumber});
+//		String decreaseSql = "update waitingroomtbl set CURRENTPEOPLE = CURRENTPEOPLE - 1 where ROMNUM = ?";
+//		jdbcTemplate.update(decreaseSql, new Object[] {roomNumber});
 		
-		/* 지정된 방 내 현재 인원수가 0일 경우 해당 방에 해당하는 컬럼은 삭제 */
+		/* 지정된 방 내 현재 인원수가 0일 경우 해당 방에 해당하는 컬럼은 삭제하기 위해 해당 방 정보 조회 쿼리 */
 		String selectSql = "select * from waitingroomtbl where ROMNUM = ?";
-		WatingRoomVO watingRoomVO = jdbcTemplate.queryForObject(selectSql, new Object[] {roomNumber}, new watingRoomRowMapper());
+		List<WatingRoomVO> watingRoomVO = jdbcTemplate.query(selectSql, new Object[] {roomNumber}, new watingRoomRowMapper());
 		
 		/* 해당 방 번호에 해당하는 튜플을 조회했을 때 현재 방 내 접속 인원 수가 없다면 방 삭제. */
-		if(watingRoomVO.getCurrentPeople() <= 0) {	
-			String deleteQuery = "delete from waitingroomtbl where ROMNUM = ?";
-			jdbcTemplate.update(deleteQuery, new Object[] {roomNumber});
-		}
-		
+		if(watingRoomVO.size() != 0)
+			if(watingRoomVO.get(0).getCurrentPeople() <= 0) {	
+				String deleteQuery = "delete from waitingroomtbl where ROMNUM = ?";
+				jdbcTemplate.update(deleteQuery, new Object[] {roomNumber});
+			}
 	}
 	
 	/* 방 번호 랜덤으로 뽑기. */
@@ -171,5 +185,7 @@ public class ChatRepo implements IChatRepo{
 				return watingRoomVO;
 			}
 		}
+
+
 
 }

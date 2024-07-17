@@ -4,10 +4,18 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
 	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
 		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/websocket
+                           http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 	
 	<context:property-placeholder location="classpath:database/jdbc.properties"/>
 	
@@ -24,5 +32,22 @@
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
-		
+	
+	<!--  -->
+	<context:component-scan base-package="com.singleton"/>
+	
+	<!-- WebSock 클래스 DI 구현 -->
+	<context:component-scan base-package="com.example.websocket"/>
+	
+	<bean id="myWebSocketHandler" class="com.example.websocket.MyWebSocketHandler"/>
+	<websocket:handlers>
+	  	<websocket:mapping path="/ws" handler="myWebSocketHandler"/>
+	  	<websocket:handshake-interceptors>
+        	<bean class="com.example.websocket.MyHandshakeInterceptor"/>
+   		</websocket:handshake-interceptors>
+	</websocket:handlers>
+	
+
+	
+	
 </beans>

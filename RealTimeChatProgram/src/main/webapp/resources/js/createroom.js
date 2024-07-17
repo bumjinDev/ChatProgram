@@ -15,7 +15,6 @@
       /* 입력한 방 제목과 최대 인원 수 입력. */
       var title = document.getElementById("title").value;
       var people = document.getElementById("people").value;
-      //var form = document.querySelector("#reg_frm");
     
       /* 요청 사용하여 방 생성에 필요한 정보를 서버로 요청 및 결과로
           생성한 페이지의 대기방 페이지 전달 받는다. */

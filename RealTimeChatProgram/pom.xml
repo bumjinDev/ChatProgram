@@ -149,6 +149,7 @@
 		    <version>2.12.3</version>
 		</dependency>
 		<!-- ojbc8.jar 추가 -->
+		<!--  -->
 		<dependency>
 		    <groupId>com.oracle.database.jdbc</groupId>
 		    <artifactId>ojdbc8</artifactId>
@@ -157,10 +158,19 @@
 		
 		<!-- webSocket 위한 라이브러리 추가 -->
 		<dependency>
-	        <groupId>org.springframework</groupId>
-	        <artifactId>spring-websocket</artifactId>
-	        <version>4.3.25.RELEASE</version> <!-- Spring의 적절한 버전으로 변경하세요 -->
-	    </dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20090211</version>
+		</dependency>
+
+	
+		
 		
 	</dependencies>
     <build>

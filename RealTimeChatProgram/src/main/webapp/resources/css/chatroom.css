@@ -42,7 +42,7 @@ body {
     margin-right: -1px;
 }
 
-.menu span {
+.menu > .inputspan {
     background-color: #F5F5F5;
     border: 3px solid slategray;
     border-radius: 5px;
@@ -53,9 +53,6 @@ body {
     margin-right: 2%;
     font-size: 15px;
     font-weight: bold;
-
-    position: relative;
-    top: -15px;
 
     text-align: center; /* 글자를 가로 가운데 정렬 */
     vertical-align: 0px; /* 글자를 세로 가운데 정렬 */
@@ -117,6 +114,9 @@ body {
 
     border : 2px solid slategray;
     display: inline-block;
+
+    background-color: white;
+    opacity: 0.5; /* 50% 불투명도 */
 }
 
 .shownickname {
@@ -161,4 +161,20 @@ body {
 
     height: 100%;
     width: 7.6%;
+}
+
+/* 채팅 화면 구성 : 채팅 입력자 이름 및 채팅 내용. */
+.user, .chatValue {
+
+    display: block;
+    margin-bottom: 5px;
+
+    height: 6.8%;
+
+    position: relative;
+    top : 1.5px;
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
 }

@@ -21,6 +21,7 @@ import com.realtimechat.main.model.MainPageVO;
 import com.realtimechat.main.service.MainPageService;
 import com.realtimechat.waitroom.model.WatingRoomVO;
 import com.realtimechat.waitroom.service.WatingRoomService;
+import com.singleton.SessionResourceVO;
 
 @Controller
 public class ChatProgramController {
@@ -38,15 +39,15 @@ public class ChatProgramController {
 	WatingRoomService watingRoomService;
 	
 	@Autowired
-	ExitRoomService exitRoomService;
+	ExitRoomService exitRoomService;		
+	
+	@Autowired
+	SessionResourceVO sessionResource;	// singleton 활용하여 닉네임 설정. 
+	
 	
 	/* MainPage 요청 처리 : 현재 전체 채팅 방 개수 및 전체 채팅 인원 수를 반환. */
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	public String loadMainPage(Model model, HttpServletRequest httpRequest) {
-		
-		/* 기존 세션이 있다면 삭제, 즉 이전에 wait 페이지로 한번 접속을 해서 이미 세션 객체 생성 및 닉네임이 세션 객체에 포함된 정보가 있다면 삭제하는 구문 */
-		if (httpRequest.getSession(false) != null)
-			httpRequest.getSession().invalidate();
+	public String loadMainPage(Model model) {
 		
 		/* 전체 채팅 방 개수 및  현재 전체 채팅방 내 인원 수 반환 */
 		MainPageVO mainPageVO = mainPageSerivce.loadMainInfo();
@@ -59,41 +60,46 @@ public class ChatProgramController {
 	
 	/* 채팅 페이지인 'chatpage.jsp' 내 버튼 '채팅 방 나가기' 구현, 즉 나가기 버튼을 누를 시 DBMS 내에서 현재 채팅 방 인원 수 컬럼 'CURRENTPEOPLE' 수 1 감소.*/
 	@RequestMapping(value="/exitChatPage/{roomNumber}", method = RequestMethod.GET)
-	public String exitChatPage(@PathVariable("roomNumber")int roomNumber) {
+	public String exitChatPage(@PathVariable("roomNumber")int roomNumber, HttpServletRequest httpRequest) {
 		
 		System.out.println("메소드 'exitChatPage()' 호출! ");
 		
 		exitRoomService.exitChatRoom(roomNumber);
-		System.out.println("메소드 'loadWaitPage()' 리다이렉트 실행! \n");
 		
+		System.out.println("메소드 'loadWaitPage()' 리다이렉트 실행! \n");
+	
 		return "redirect:/loadWaitPage";
 	}
 	
 	/* loadWaitPage() : 채팅 대기방 목록 제공 페이지 "waitpage.jsp" 페이지 제공.
-	 * 1. 사용자 닉네임을 HttpRequest 세션 객체 내 속성으로부터 가져온다.
+	 * 1. 사용자 닉네임을 WebSocket 에서 생성한 싱글톤 패턴으로부터 가져온다.
 	 * 2. 생성된 채팅 방들의 정보를 테이블 'watingroomtbl'로부터 가져온다.(List<WatingRoomVO>로써 반환)
 	 * 3. 닉네임 및 채팅 방 정보(방 번호, 방 제목, 참여 인원수)를 Model 객체에 담아서 디스패처 서블릿 통해 HttpRequest 객체로써 전달(Srping Framework MVC 동작 로직).
 	*/
 	
+	/* 현재 메소드는 채팅 대기방 페이지를 로드하는 페이지이며 초기 페이지에서 사용자가 닉네임을 입력하고 들어올 때에 WebScoekt 세션을 index.js 에서 생성 후 들어오는 페이지. */
 	@RequestMapping(value="/loadWaitPage", method = RequestMethod.GET)
 	public String loadWaitPage(HttpServletRequest httpRequest, Model model) {
 		
 		System.out.println("메소드 'loadWaitPage()' 호출! ");
 		
+		HttpSession httpSession = httpRequest.getSession();	/* Http 세션 객체 생성 : 모든 컨트롤러 빈즈에서  */
 		
-		HttpSession session = httpRequest.getSession();
-	    System.out.println("전달 받은 닉네임 : " + httpRequest.getParameter("nickName"));
-		System.out.println("생성된 session 객체 ID : " + httpRequest.getSession());
+		if(httpRequest.getParameter("username") != null)	/* 즉 해당 메소드 최초 요청일 시에만 */
+			httpSession.setAttribute("username", httpRequest.getParameter("username"));
 		
-		/* 세션 객체 내 닉네임 설정은 최초 입력 시에만 적용. */
-		if(httpRequest.getParameter("nickName") != null) {
-			session.setAttribute("nickName", httpRequest.getParameter("nickName"));
-		}
+		String username = (String) httpSession.getAttribute("username");
+		
+		/* 웹 소켓 통한 닉네임 저장 보류. */
+//		System.out.println("httpRequest.getRequestedSessionId() : " + httpRequest.getRequestedSessionId());
+//		String username = (String) sessionResource.httpSessionList.get(httpRequest.getRequestedSessionId()).getAttributes().get("username");
+		System.out.println("username : " + username);
+		
 		/* 생성되어 있는 채팅 방들의 정보들을 List<WatingRoomVO> 으로써 반환 받는다.*/
 		List<WatingRoomVO> loadWaitRooms = watingRoomService.loadWatingRoom();
 	    
 		/* 닉네임 및 방 목록 정보들을 Model 객체 내 저장 및 반환. */
-		model.addAttribute("nickName", session.getAttribute("nickName"));	// 닉네임 저장.
+		model.addAttribute("nickName", username);	// 닉네임 저장.
 		model.addAttribute("loadWaitRooms", loadWaitRooms);
 		
 		return "waitpage";
@@ -104,25 +110,30 @@ public class ChatProgramController {
 	 * 	2. "createpage.jsp" 에서 방을 생성함으로써 컨트롤러 메소드에서 리다이렉트 함으로써 페이지 생성 후의 요청을 응답으로 반환.
 	 * */
 	@RequestMapping(value="/loadChatPage/{roomNumber}", method = RequestMethod.GET)
-	public String loadChatPage(@PathVariable("roomNumber") int roomNumber, Model model, HttpServletRequest httpRequest) {
+	public String loadChatPage(HttpServletRequest httpRequest, @PathVariable("roomNumber") int roomNumber, Model model) {
 		
 		System.out.println("메소드 'loadChatPage' 실행! ");
-		
-		System.out.println("디버깅 - 방 번호 : " + roomNumber);
+		System.out.println("요청된 방 번호 : " + roomNumber);
 		
 		ChatRoomPeopleVO chatRoomPeopleVO = chatRoomPeopleService.readChatPeople(roomNumber);
-		String returnPage = null;
 		
-		if(chatRoomPeopleVO.getIsAllowed()) {
+		String returnPage = null;
+	
+		String username = (String) httpRequest.getSession().getAttribute("username");
+//		System.out.println("httpRequest.getRequestedSessionId() : " + httpRequest.getRequestedSessionId());
+//		String username = (String) sessionResource.httpSessionList.get(httpRequest.getRequestedSessionId()).getAttributes().get("username");
+		System.out.println("username : " + username);
+		
+		/* 현재 방 내 인원수와 최대 인원수를 비교해서 입장 가능 여부 확인. */
+		if(chatRoomPeopleVO.getIsAllowed()) {	// 여유가 1명 이상 있다면 페이지 랜더링.
 			
 			/* 요청 또는 생성 된 방 번호를 기준으로 다음과 같은 정보를 'chatpage.jsp' 페이지 내 랜더링 하여 제공한다.
-			 * 1. 닉네임 : 세션 객체 내 저장된 속성 값 불러오기 (현재 'index.jsp' 페이지 미 개발이니 임시 데이터 "abcd" 적용)
+			 * 1. 닉네임
 			 * 2. 현재 방 참여 인원수 : 방 번호 'roomNumber' 기준 테이블 'WATINGROOM.TBL' 조회 결과 사용
 			 * 3. 방 번호 : 변수 'roomNumber' 적용.
 			*/
-			
-			HttpSession session = httpRequest.getSession();
-			model.addAttribute("nickName", session.getAttribute("nickName"));			// 닉네임 설정
+			System.out.println("");
+			model.addAttribute("nickName", username);			// 닉네임 설정
 			model.addAttribute("currentPeople", chatRoomPeopleVO.getRoomPeople());// 현재 방 참여 인원수
 			model.addAttribute("roomNumber", roomNumber);	// 방 번호 설정 : 대기방 페이지 'watingpage.jsp' 내 입장 버튼 또는 방 생성 페이지 'createpage.jsp' 통한 생성 방 번호.
 			
@@ -143,11 +154,13 @@ public class ChatProgramController {
 	
 	/* "createpage.jsp"의 '채팅 방 생성 요청' 따른 페이지 제공 메소드. */
 	@RequestMapping(value="/createChatRoom", method = RequestMethod.POST)
-	public String createChatRoom(@RequestParam("roomName") String roomName, @RequestParam("roomMax") String roomMax) {
-		System.out.println("roomCreatePage() 실행.");
+	public String createChatRoom(@RequestParam("roomName") String roomName, @RequestParam("roomMax") String roomMax, HttpServletRequest httpRequest) {
+		System.out.println("createChatRoom() 실행.");
 		
 		int roomNumber = createRoomService.createChatRoom(roomName, Integer.parseInt(roomMax));
-		System.out.println("생성 결과로 반환된 roomNumber : " + roomNumber);
+		
+		System.out.println("생성 결과로 반환된 방 번호 : " + roomNumber);
+		System.out.println("생성 결과로 반환된 방 이름 : " + roomName);
 		/* 방 생성 서비스 빈 'createRoomService' 결과로 생성된 방 번호를 가지고 메소드 'loadChatPage' 로 요청을 분기하여 해당 생성된 방을 "chatpage.jsp" 페이지로 랜더링 후 사용자 브라우저에 응답으로 전달.  */
 		return "redirect:/loadChatPage/"+roomNumber; // Repository 'ChatRepo' 방 생성(방 번호는 랜덤 생성하여 반환).
 	}

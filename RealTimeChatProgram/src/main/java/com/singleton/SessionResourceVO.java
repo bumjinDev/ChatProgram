@@ -1,0 +1,31 @@
+package com.singleton;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
+
+
+/* VO 객체인 SessionResourceVO 내 동일한 세션 객체를 두개의 컬렉션에 저장하는 이유는 하나는 키 값으로 닉네임 등을 가진 세션 객체르 ㄹ불러오기 함, 즉 컨트롤러 빈에서 사용하고
+ * session id 로 저장하는 컬렉션은 아에 . */
+@Component
+public class SessionResourceVO {
+	
+	/* 방 번호 별 세션 객체 저장 :
+	 * 	1. 클라이언트 WebSocket 에서 데이터 전달 시 이를 모든 클라이언트에 재 전송
+	 * 	2. 단순 채팅 방 페이지 접속 아닌 실제 WebSocket 세션 객체 생성 후에 방 인원 수 증가. : afterConnectionEstablished
+	 * 	3. 해당 WebSocket 세션 객체 내 세션 종료 시 해당 방 번호 따른 방 인원 수 감소. : afterConnectionClosed
+	 *  */
+	public HashMap <String, ArrayList<WebSocketSession>> roomWebsocks = new HashMap <String, ArrayList<WebSocketSession>>();
+	
+//	/* sessionList : 현재 접속 중인 세션 ID 별 세션 객체, 모든 채팅 대상자에 대한 리스트 유지 목적. */
+//	public HashMap <String, WebSocketSession> sessionList = new HashMap <String, WebSocketSession>();
+//	
+//	/* 각 페이지 랜더링 및 탭 재 로드 시 닉네임 등을 브라우저 세션 단위(HttpServletRequest)의 id를 받아서 컨트롤러 빈에서 해당 번호로 찾아서 세션 내 닉네임 등 설정.
+//	 * 또한 각 세션 객체 별 세션 타임아웃을 정하는데 이유는 새로고침(ctrl+f5 또는 */
+//	public HashMap <String, WebSocketSession> httpSessionList = new HashMap<String, WebSocketSession>();
+//	
+}

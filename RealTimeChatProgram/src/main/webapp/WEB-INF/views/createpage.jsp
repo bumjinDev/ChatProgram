@@ -18,7 +18,6 @@
 			<input type="text" id="title" name="roomName"></input><br><br>
 		<label class="people" for="people">최대 인원 수</label>
 			<select id="people" name="roomMax">
-			  <option value=1>1</option>
 			  <option value=2>2</option>
 			  <option value=3>3</option>
 			  <option value=4>4</option>

@@ -17,12 +17,13 @@ window.onload=function(){
         });
     }
 
-    /* 버튼 "메인 화면 이동" 클릭 시 메인화면으로 이동하며 기존 세션은 삭제한다. */
+    /* 버튼 "메인 화면 이동" 클릭 시 메인화면으로 이동하며 기존 websock 세션은 index.js 에서 . */
     pageIndex.addEventListener("click", function(){
 
         window.location.href ="./";
     });
 
+    /* 채팅 방 생성 페이지 요청 */
     createroom.addEventListener("click", function(){
 
         window.location.href ="./loadCreatePage";
