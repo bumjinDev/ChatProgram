@@ -16,29 +16,23 @@ public class MyHandshakeInterceptor implements HandshakeInterceptor {
        System.out.println("beforeHandshake() 실행!");
      
        /* 방 번호를 httpRequest 객체로부터 받아서 session 객체 내 저장한다. 이후 해당 방 번호는 WebSocket 세션 객체 성립 이후
-        * 방 번호 별 세션 객체 리스트를 생성하는 데 사용. 또한 해당 WebSocket 세션 객체가 종료 되었을 때 */
+        * 방 번호 별 세션 객체 리스트를 생성하는 데 사용. 또한 해당 WebSocket 세션 객체가 종료 되었을 때 해당 방 번호를 기준으로 방 번호 별 세션 리스트를
+        * 조회하며 해당 세션 객체가 속한 방 번호를 기준으로 방 리스트가 없을 경우 리스트 삭제한다. */
        String reqRoomNum = extractHttpSessionIdFromRequest(request);
        System.out.println("reqRoomNum : " + reqRoomNum);
        attributes.put("roomnumber", reqRoomNum);
-       
-//       String getSessionId = extractHttpSessionIdFromRequest(request);
-//       attributes.put("httpReuqestId", getSessionId);
-//       
-//       System.out.println("attributes.get('httpReuqestId')" + attributes.get("httpReuqestId"));
        
        return true;
     }
 
     private String extractHttpSessionIdFromRequest(ServerHttpRequest request) {
        
-    	System.out.println("extractHttpSessionIdFromRequest() 호출");
+    	System.out.println("extractHttpSessionIdFromRequest() 호출 (session 생성 전 http 내 roomnumber 확인) ");
     	ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
         String roomnumber = (String) servletRequest.getServletRequest().getParameter("roomnumber");
         
         System.out.println("roomNumber : " + roomnumber);
         return roomnumber;
-//        ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-//        return servletRequest.getServletRequest().getSession().getId();
     }
 
     @Override

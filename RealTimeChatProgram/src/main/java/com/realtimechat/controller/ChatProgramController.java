@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.SessionResource.SessionResource;
 import com.realtimechat.ExitRoomService.service.ExitRoomService;
 import com.realtimechat.chatroom.model.ChatRoomPeopleVO;
-import com.realtimechat.chatroom.service.ChatRoomPeopleService;
+import com.realtimechat.chatroom.service.LoadChatRoomService;
 import com.realtimechat.createroom.service.CreateRoomService;
 import com.realtimechat.main.model.MainPageVO;
 import com.realtimechat.main.service.MainPageService;
 import com.realtimechat.waitroom.model.WatingRoomVO;
 import com.realtimechat.waitroom.service.WatingRoomService;
-import com.singleton.SessionResourceVO;
 
 @Controller
 public class ChatProgramController {
@@ -33,7 +33,7 @@ public class ChatProgramController {
 	CreateRoomService createRoomService;
 	
 	@Autowired
-	ChatRoomPeopleService chatRoomPeopleService;
+	LoadChatRoomService loadChatRoomService;
 	
 	@Autowired
 	WatingRoomService watingRoomService;
@@ -42,18 +42,21 @@ public class ChatProgramController {
 	ExitRoomService exitRoomService;		
 	
 	@Autowired
-	SessionResourceVO sessionResource;	// singleton 활용하여 닉네임 설정. 
+	SessionResource sessionResource;	// singleton 활용하여 닉네임 설정. 
 	
 	
 	/* MainPage 요청 처리 : 현재 전체 채팅 방 개수 및 전체 채팅 인원 수를 반환. */
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	public String loadMainPage(Model model) {
+	public String loadMainPage(Model model, HttpServletRequest httpRequest) {
 		
 		/* 전체 채팅 방 개수 및  현재 전체 채팅방 내 인원 수 반환 */
 		MainPageVO mainPageVO = mainPageSerivce.loadMainInfo();
 		
 		model.addAttribute("totalRoom", mainPageVO.getTotalRoom());	// 전체 채팅방 개수
 		model.addAttribute("totalUser", mainPageVO.getUser());		// 전체 채팅 방 내 전체 인원
+		
+		/* 채팅방 요청, 즉 '/loadChatPage/{roomNumber}'의 getChatRoom 호출 시 실제 리다이렉트 요청인지 아닌 지 판별. */
+		sessionResource.refererList.put(httpRequest.getRequestedSessionId(), null);	
 		
 		return "index";
 	}
@@ -90,12 +93,6 @@ public class ChatProgramController {
 		
 		String username = (String) httpSession.getAttribute("username");
 		
-		/* 웹 소켓 통한 닉네임 저장 보류. */
-//		System.out.println("httpRequest.getRequestedSessionId() : " + httpRequest.getRequestedSessionId());
-//		String username = (String) sessionResource.httpSessionList.get(httpRequest.getRequestedSessionId()).getAttributes().get("username");
-		System.out.println("username : " + username);
-		
-		/* 생성되어 있는 채팅 방들의 정보들을 List<WatingRoomVO> 으로써 반환 받는다.*/
 		List<WatingRoomVO> loadWaitRooms = watingRoomService.loadWatingRoom();
 	    
 		/* 닉네임 및 방 목록 정보들을 Model 객체 내 저장 및 반환. */
@@ -112,17 +109,16 @@ public class ChatProgramController {
 	@RequestMapping(value="/loadChatPage/{roomNumber}", method = RequestMethod.GET)
 	public String loadChatPage(HttpServletRequest httpRequest, @PathVariable("roomNumber") int roomNumber, Model model) {
 		
-		System.out.println("메소드 'loadChatPage' 실행! ");
+		System.out.println("메소드 'Controller.loadChatPage' 실행! ");
 		System.out.println("요청된 방 번호 : " + roomNumber);
 		
-		ChatRoomPeopleVO chatRoomPeopleVO = chatRoomPeopleService.readChatPeople(roomNumber);
+		ChatRoomPeopleVO chatRoomPeopleVO = loadChatRoomService.readChatPeople(roomNumber, httpRequest);
 		
 		String returnPage = null;
-	
 		String username = (String) httpRequest.getSession().getAttribute("username");
-//		System.out.println("httpRequest.getRequestedSessionId() : " + httpRequest.getRequestedSessionId());
-//		String username = (String) sessionResource.httpSessionList.get(httpRequest.getRequestedSessionId()).getAttributes().get("username");
+		
 		System.out.println("username : " + username);
+		System.out.println("chatRoomPeopleVO.getRoomPeople() : " + chatRoomPeopleVO.getRoomPeople());
 		
 		/* 현재 방 내 인원수와 최대 인원수를 비교해서 입장 가능 여부 확인. */
 		if(chatRoomPeopleVO.getIsAllowed()) {	// 여유가 1명 이상 있다면 페이지 랜더링.
@@ -134,12 +130,15 @@ public class ChatProgramController {
 			*/
 			System.out.println("");
 			model.addAttribute("nickName", username);			// 닉네임 설정
-			model.addAttribute("currentPeople", chatRoomPeopleVO.getRoomPeople());// 현재 방 참여 인원수
+			model.addAttribute("currentPeople", chatRoomPeopleVO.getRoomPeople());// 현재 방 참여 인원수, 방 생성 당시인 페이지 랜더링 과정에서는 당연히 0명, 이유는 페이지 랜더링 이후 웹 소켓 맺기 때문.
 			model.addAttribute("roomNumber", roomNumber);	// 방 번호 설정 : 대기방 페이지 'watingpage.jsp' 내 입장 버튼 또는 방 생성 페이지 'createpage.jsp' 통한 생성 방 번호.
 			
 			returnPage = "chatpage";
-		} else {
-			 returnPage = "redirect:/errorAlert";
+			
+		} else if(chatRoomPeopleVO.getRoomPeople() == 11){	// 방을 초과했다면 그에 맞는 경고창 화면 띄우기.
+			 returnPage = "redirect:/errorAlertMax";
+		} else if (chatRoomPeopleVO.getRoomPeople() == 0){											// 아에 없는 방 이므로 그에 맞는 경고창 화면 띄우기.
+			returnPage = "redirect:/errorAlertNone";
 		}
 		
 		return returnPage;
@@ -155,6 +154,7 @@ public class ChatProgramController {
 	/* "createpage.jsp"의 '채팅 방 생성 요청' 따른 페이지 제공 메소드. */
 	@RequestMapping(value="/createChatRoom", method = RequestMethod.POST)
 	public String createChatRoom(@RequestParam("roomName") String roomName, @RequestParam("roomMax") String roomMax, HttpServletRequest httpRequest) {
+		
 		System.out.println("createChatRoom() 실행.");
 		
 		int roomNumber = createRoomService.createChatRoom(roomName, Integer.parseInt(roomMax));
@@ -165,10 +165,18 @@ public class ChatProgramController {
 		return "redirect:/loadChatPage/"+roomNumber; // Repository 'ChatRepo' 방 생성(방 번호는 랜덤 생성하여 반환).
 	}
 	
-	@RequestMapping(value="/errorAlert", method = RequestMethod.GET)
-	public String errorAlert() {
+	
+	@RequestMapping(value="/errorAlertMax", method = RequestMethod.GET)
+	public String errorAlertMax() {
 		System.out.println("메소드 errorAlert() 실행");
 		
-		return "errorAlert";
+		return "errorAlertMax";
+	}
+	
+	@RequestMapping(value="/errorAlertNone", method = RequestMethod.GET)
+	public String errorAlertNone() {
+		System.out.println("메소드 errorAlert() 실행");
+		
+		return "errorAlertNone";
 	}
 }
