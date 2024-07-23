@@ -85,13 +85,14 @@ public class ChatRepo implements IChatRepo{
 		String selectSql = "SELECT * FROM waitingroomtbl where romnum = ?";
 		WatingRoomVO watingRoomVO = jdbcTemplate.queryForObject(selectSql, new Object[] {roomNumber}, new watingRoomRowMapper());
 		
-		System.out.println("update 따른 현재 인원 수 : " + watingRoomVO.getCurrentPeople());
+		System.out.println("update 직후 해당 방의 현재 인원 수 : " + watingRoomVO.getCurrentPeople());
 		
-		/* 나가기 요청이나 혹은 단순 x 표시 등을 눌러서 페이지를 나갈 시에 방 인원수가 없다면 방을 페지 하는게 맞으나 새로 고침이면 폐지하면 안됨!. */
-		if(watingRoomVO.getCurrentPeople() <= 0 && bool) {
-			
-			String deleteSql = "delete from waitingroomtbl where romnum = ?";
-			jdbcTemplate.update(deleteSql, new Object[] {roomNumber});
+		/* 나가기 요청이나 혹은 단순 x 표시 등을 눌러서 페이지를 나갈 시에 방 인원수가 없다면 방을 페지 하는게 맞으나 새로 고침이면 해당 방 튜플 하면 안됨!. */
+		if (watingRoomVO.getCurrentPeople() == 0 && bool) {
+			System.out.println("해당 테이블 삭제 쿼리 시작");
+		    String deleteSql = "delete from waitingroomtbl where romnum = ?";
+		    int res = jdbcTemplate.update(deleteSql, new Object[] {roomNumber});
+		    System.out.println("영향 받은 쿼리 개수 : " + res);
 		}
 	}
 

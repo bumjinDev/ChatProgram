@@ -1,5 +1,6 @@
 package com.example.websocket;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.CloseStatus;
@@ -13,11 +14,11 @@ import com.realtimechat.dao.ChatRepo;
 
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpSession;
+
 /* 소켓 핸들러 : 스프링 프레임 워크는 'WebSocket' 클래스를 빈으로 구현할 때 '@EnableWebSocket' 을 사용해서 구현.. 하며
  * 	이때 여러 통신 메시지 종류에 따라 다양한 핸들러를 지원하나 나는 채팅 프로그램이므로 'TextWebSocketHandler'를 구현하여 텍스트를 처리하는 핸들러
  *  'handleTextMessage'을 사용. */
-
-
 
 @EnableWebSocket
 @Configuration
@@ -33,13 +34,21 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		
-		/* 'roomWebsocks' 전체에서 현재 Websocket 세션 객체가 속한 방 번호만 추출해서 해당 방 번호로 조회 */
+		/* 'roomWebsocks' 전체에서 현재 Websocket 세션 객체가 속한 방 번호만 추출해서 해당 방 번호로 조회하여 해당 방 번호에 해당하는 웹 소켓 리스트들을 추려서
+		 * 해당 리스트에 해당하는 웹 소켓에 대해서만 닉네임과 채팅 내용을 JSON 내용을 파싱해서 결과로 전달. */
 		String currentRoomNum = (String) session.getAttributes().get("roomnumber");
-		
 		ArrayList<WebSocketSession> lists = sessionResource.roomWebsocks.get(currentRoomNum);
 		
-		for(WebSocketSession obj : lists)
-			obj.sendMessage(message);
+		String currentUserName = (String) session.getAttributes().get("username");		// 사용자 이름을 JSON 데이터 내 포함
+		
+		JSONObject jObj = new JSONObject();
+		jObj.put("user", currentUserName);
+		jObj.put("chatValues", message.getPayload());	
+		
+		TextMessage sendMessage = new TextMessage(jObj.toString());
+		
+		for(WebSocketSession webSocket : lists)
+			webSocket.sendMessage(sendMessage);
 		
 		String chatUser = session.getId();			// 대화 사용자를 로그 파일에 담기 위함
 		String chatValue = message.getPayload();	// 대화 내용을 로그 파일에 담기 위함.
@@ -99,15 +108,24 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		 * */
 		System.out.println("sessionResource.roomWebsocks.get(closeSessionRoomNum).size() : " + sessionResource.roomWebsocks.get(closeSessionRoomNum).size());
 		
-		boolean bool = false;
-		if(session.getAttributes().containsKey("refresh"))
-			bool = true;
+		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
 		
-		chatRepo.pathCurrentPeople(Integer.parseInt(closeSessionRoomNum),sessionResource.roomWebsocks.get(closeSessionRoomNum).size(), bool);
+		boolean bool = false;
+		if (httpSession != null) {
+	        Boolean refresh = (Boolean) httpSession.getAttribute("refresh");
+	        System.out.println("Boolean refresh : " + refresh);
+	        
+	        if (refresh != null && refresh) {  /* 현재 페이지가 새로고침일 때 만약에 현재 방 내 인원수가 혼자일 때 현재 방 인원수가 0으로 바뀌엇다고 그 즉시 방 삭제 안되게 하기 위함. */
+	            bool = true;
+	            chatRepo.pathCurrentPeople(Integer.parseInt(closeSessionRoomNum), sessionResource.roomWebsocks.get(closeSessionRoomNum).size(), bool);
+	            System.out.println("새로 고침 됐어요 !");
+	        }
+	        httpSession.setAttribute("refresh", false);
+	    }
+		bool = false;	// 다시 원상복구
+		
 		
 		if(sessionResource.roomWebsocks.get(closeSessionRoomNum).size() == 0)	// 해당 방 번호 내 세션 리스트가 없을 경우 아에 방 번호 리스트 HashMap 삭제.		
 			sessionResource.roomWebsocks.remove(closeSessionRoomNum);	// 현재 방 번호 키 에 대한 세션 리스트가 없으니 해당 키 셋 삭제, 채팅 했을 때 동시에 전달 받는 리스트 삭제.
-
-		
 	}
 }

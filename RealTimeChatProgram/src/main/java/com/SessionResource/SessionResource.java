@@ -22,7 +22,8 @@ public class SessionResource {
 	 *  */
 	public HashMap <String, ArrayList<WebSocketSession>> roomWebsocks = new HashMap <String, ArrayList<WebSocketSession>>();
 	
-	/* 현재 채팅 방 페이지 요청 시 새로고침인지 아닌지 판별하기 위한 각 HttpServlet ID 별 헤더 'referer' 저장하는 HashMap 컬렉션 */
+	/* 'chatRepo.getChatRoom' 에서 사용되며 현재 채팅 방 페이지 요청 시 새로고침인지 아닌지 판별하기 위한
+	 * 각 HttpServlet ID 별 헤더 'referer' 저장하는 HashMap 컬렉션 */
 	public HashMap <String, String> refererList = new HashMap<String, String>();
 	
 //	/* sessionList : 현재 접속 중인 세션 ID 별 세션 객체, 모든 채팅 대상자에 대한 리스트 유지 목적. */
