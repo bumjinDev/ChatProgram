@@ -131,6 +131,7 @@ public class ChatProgramController {
 			System.out.println("");
 			model.addAttribute("nickName", username);			// 닉네임 설정
 			model.addAttribute("currentPeople", chatRoomPeopleVO.getRoomPeople());// 현재 방 참여 인원수, 방 생성 당시인 페이지 랜더링 과정에서는 당연히 0명, 이유는 페이지 랜더링 이후 웹 소켓 맺기 때문.
+			System.out.println("현재 currnetPoepole!! : " + chatRoomPeopleVO.getRoomPeople());
 			model.addAttribute("roomNumber", roomNumber);	// 방 번호 설정 : 대기방 페이지 'watingpage.jsp' 내 입장 버튼 또는 방 생성 페이지 'createpage.jsp' 통한 생성 방 번호.
 			
 			returnPage = "chatpage";

@@ -16,7 +16,7 @@ public class RefreshRestController {
 
     @PostMapping("/refresh")
     public void handleRefresh(@RequestBody Map<String, Boolean> payload, HttpSession httpSession) {
-        	System.out.println("페이지 재부팅 되어 호출!");
+        	System.out.println("'handleRefresh', 페이지 재부팅 되어 호출!");
             
         	httpSession.setAttribute("refresh", true);
             System.out.println("httpSession.getAttribute('refresh') : " + httpSession.getAttribute("refresh"));

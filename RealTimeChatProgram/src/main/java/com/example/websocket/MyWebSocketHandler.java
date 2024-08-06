@@ -106,23 +106,24 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		 * 		인지 분간이 안되기 때문에 만약에 위 리다이렉션 또는 x 표시 로직 그대로 db 내 이용자수가 0이라고 지워버리면 새로고침 시 에러 뜬다..
 		 * 		고로 브라우저에서 리프레시(새로고침) 할 때 를 구분하여 진짜 리프레쉬 
 		 * */
-		System.out.println("sessionResource.roomWebsocks.get(closeSessionRoomNum).size() : " + sessionResource.roomWebsocks.get(closeSessionRoomNum).size());
 		
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
 		
-		boolean bool = false;
 		if (httpSession != null) {
+			
 	        Boolean refresh = (Boolean) httpSession.getAttribute("refresh");
 	        System.out.println("Boolean refresh : " + refresh);
 	        
 	        if (refresh != null && refresh) {  /* 현재 페이지가 새로고침일 때 만약에 현재 방 내 인원수가 혼자일 때 현재 방 인원수가 0으로 바뀌엇다고 그 즉시 방 삭제 안되게 하기 위함. */
-	            bool = true;
-	            chatRepo.pathCurrentPeople(Integer.parseInt(closeSessionRoomNum), sessionResource.roomWebsocks.get(closeSessionRoomNum).size(), bool);
-	            System.out.println("새로 고침 됐어요 !");
-	        }
+	            
+	           chatRepo.pathCurrentPeople(Integer.parseInt(closeSessionRoomNum), sessionResource.roomWebsocks.get(closeSessionRoomNum).size(), true);
+	           System.out.println("새로 고침 됐어요 !");
+	        } else
+	    		sessionResource.refererList.put(httpSession.getId() , "none");
+	        
 	        httpSession.setAttribute("refresh", false);
+	        System.out.println("새로 고침 false 저장 결과 :  " + httpSession.getAttribute("refresh"));
 	    }
-		bool = false;	// 다시 원상복구
 		
 		
 		if(sessionResource.roomWebsocks.get(closeSessionRoomNum).size() == 0)	// 해당 방 번호 내 세션 리스트가 없을 경우 아에 방 번호 리스트 HashMap 삭제.		
