@@ -17,7 +17,7 @@ window.onload = function() {
     console.log("사용자 닉네임: ", nickname);
     console.log("방 번호: ", roomnumber);
 
-    var socket = new WebSocket("ws://43.202.178.156:8181/chat/ws?roomnumber=" + roomnumber.value + "&username=" + nickname.value);
+    var socket = new WebSocket("ws://localhost:8181/chat/ws?roomnumber=" + roomnumber.value + "&username=" + nickname.value);
 
     socket.onopen = function(event) {
         console.log("세션 성립!");
