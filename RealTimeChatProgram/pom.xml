@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mycompany</groupId>
-	<artifactId>myapp</artifactId>
+	<artifactId>chat</artifactId>
 	<name>RealTimeChatProgram</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
@@ -149,11 +149,18 @@
 		    <version>2.12.3</version>
 		</dependency>
 		<!-- ojbc8.jar 추가 -->
-		<!--  -->
+		<!--
 		<dependency>
 		    <groupId>com.oracle.database.jdbc</groupId>
 		    <artifactId>ojdbc8</artifactId>
 		    <version>23.4.0.24.05</version>
+		</dependency>
+		-->
+		
+		<dependency>
+		    <groupId>com.oracle.database.jdbc</groupId>
+		    <artifactId>ojdbc11</artifactId>
+		    <version>23.5.0.24.07</version>
 		</dependency>
 		
 		<!-- webSocket 위한 라이브러리 추가 -->
@@ -168,9 +175,6 @@
 		    <artifactId>json</artifactId>
 		    <version>20090211</version>
 		</dependency>
-
-	
-		
 		
 	</dependencies>
     <build>

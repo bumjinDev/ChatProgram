@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.SessionResource.SessionResource;
 import com.realtimechat.chatroom.model.ChatRoomPeopleVO;
+import com.realtimechat.createroom.dao.RoomLogVO;
 import com.realtimechat.main.model.MainPageVO;
 import com.realtimechat.waitroom.model.WatingRoomVO;
 
@@ -29,7 +30,7 @@ public class ChatRepo implements IChatRepo{
 	@Autowired
 	SessionResource sessionResource;
 	
-//	/* 웹 어플리케이션 재 실행 시 현재 채팅 방 목록은 초기화로 진행.(log 테이블인 'RooMLogtbl' 은 상관 없음.) */
+	//	/* 웹 어플리케이션 재 실행 시 현재 채팅 방 목록은 초기화로 진행.(log 테이블인 'RooMLogtbl' 은 상관 없음.) */
 	@PostConstruct
 	void init() {
 		
@@ -143,8 +144,6 @@ public class ChatRepo implements IChatRepo{
 			
 			chatRoomPeopleVO.setRoomPeople(0);		// 참여 인원수 변동 없음. (VO 객체 채우기 위한 가비지 값)
 			chatRoomPeopleVO.setIsAllowed(false);	// 결과 값 거짓으로 변경.
-			
-			System.out.println("요청 페이지 반환 불가 - 페이지 없음.\n\n");
 		
 		/* 새로 고침 요청 이라면 별다른 계산(현재 방 인원수 + 1)을 안하고 그냥 현재 방 페이지 인원 수 그대로 돌려줌  */
 		} else if(httpRequest.getHeader("Referer").equals(null) || httpRequest.getHeader("Referer").equals(sessionResource.refererList.get(httpRequestId))) {
@@ -155,15 +154,10 @@ public class ChatRepo implements IChatRepo{
 			
 			sessionResource.refererList.put(httpRequestId, httpRequest.getHeader("Referer"));
 			
-			System.out.println("디버깅 - 현재 인원수 : " + chatRoomPeopleVO.getRoomPeople() +
-					", 최대 인원 수 : " + Integer.parseInt(users.get(0).get("MAXPEOPLE").toString()));
-			
 		/* 새로 고침 아닌 새로 방 입장 시 확인하는 if 문, 인원수가 적절하면 허용. */
 		} else if(Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString()) + 1 <= Integer.parseInt(users.get(0).get("MAXPEOPLE").toString())){
 			System.out.println("요청된 chat 페이지 반환 과정 실행\n");
 			
-			
-			System.out.println("디버깅 - chatRoomPeopleVO.getRoomPeople() : " + chatRoomPeopleVO.getRoomPeople());
 			/* jsp 페이지 랜더링 시에 만약에 새로 고침이 아니라면 현재 db 내 인원수에 +1 을 하여 jsp 랜더링 하여 브라우저에서 랜더링 받은 직후의 값과 소켓 생성 시 값을 일치시키고
 			 * 만약에 단순 페이지 새로고침이면 '+1' 을 하지 않음으로써 현재 인원수 그대로 jsp 페이지 내 랜더링 하게 끔 함. */
 			chatRoomPeopleVO.setRoomPeople(Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString())+1);
@@ -240,6 +234,17 @@ public class ChatRepo implements IChatRepo{
 	     } while (usedNumbers.contains(newNumber));
 	        return newNumber;
 	 	 }
+	 
+	
+	/* WebSocketHandler 에서 직접적으로 호출하여 db의 테이블 'RooMLogTBL' 내 채팅 내용 저장. */
+	@Override
+	public void chatLog(RoomLogVO roomLogVO) {
+	
+		System.out.println("ChatRepo.chatLog() 실행");
+		
+		String insertSql = "insert into roomlogtbl values(?,?,?,?)";	
+		jdbcTemplate.update(insertSql, new Object[] {roomLogVO.getRomNum(), roomLogVO.getConverSationTime(), roomLogVO.getChatNickName(), roomLogVO.getChatContent()});	
+	}
 	 
 	 class watingRoomRowMapper implements RowMapper<WatingRoomVO>{
 

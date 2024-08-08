@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.realtimechat.chatroom.model.ChatRoomPeopleVO;
+import com.realtimechat.createroom.dao.RoomLogVO;
 import com.realtimechat.main.model.MainPageVO;
 import com.realtimechat.waitroom.model.WatingRoomVO;
 
@@ -16,4 +17,5 @@ public interface IChatRepo {
 	public void pathCurrentPeople(int roomNumber, int people, boolean bool); 	
 	public int createRoom(String roomName, int roomMax);	/* 채팅 방 생성 요청 처리 */
 	public void exitChatPage(int roomNumber);
+	public void chatLog(RoomLogVO roomLogVO);
 }

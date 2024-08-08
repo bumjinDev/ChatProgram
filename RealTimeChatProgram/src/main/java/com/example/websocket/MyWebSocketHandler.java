@@ -10,11 +10,14 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.SessionResource.SessionResource;
+import com.realtimechat.createroom.dao.RoomLogVO;
 import com.realtimechat.dao.ChatRepo;
-
 import java.util.ArrayList;
-
 import javax.servlet.http.HttpSession;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 /* 소켓 핸들러 : 스프링 프레임 워크는 'WebSocket' 클래스를 빈으로 구현할 때 '@EnableWebSocket' 을 사용해서 구현.. 하며
  * 	이때 여러 통신 메시지 종류에 따라 다양한 핸들러를 지원하나 나는 채팅 프로그램이므로 'TextWebSocketHandler'를 구현하여 텍스트를 처리하는 핸들러
@@ -42,6 +45,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		String currentUserName = (String) session.getAttributes().get("username");		// 사용자 이름을 JSON 데이터 내 포함
 		
 		JSONObject jObj = new JSONObject();
+		
 		jObj.put("user", currentUserName);
 		jObj.put("chatValues", message.getPayload());	
 		
@@ -49,9 +53,23 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		
 		for(WebSocketSession webSocket : lists)
 			webSocket.sendMessage(sendMessage);
+	
+		/* 대화 내용 로그로 저장 */
+		LocalDate now = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		String nowDate = now.format(formatter);
 		
-		String chatUser = session.getId();			// 대화 사용자를 로그 파일에 담기 위함
-		String chatValue = message.getPayload();	// 대화 내용을 로그 파일에 담기 위함.
+		LocalDate formattedLocalDate = LocalDate.parse(nowDate, formatter);
+		java.util.Date resDate = Date.from(formattedLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+		RoomLogVO roomLogVO = new RoomLogVO();
+		
+		roomLogVO.setRomNum(Integer.parseInt(currentRoomNum));
+		roomLogVO.setConverSationTime(resDate);
+		roomLogVO.setChatNickName(currentUserName);
+		roomLogVO.setChatContent(message.getPayload());
+		
+		chatRepo.chatLog(roomLogVO);
 	}
 	
 	/* 클라이언트가 WebSocke 세션 생성 시의 seesion 객체 저장 및 요청한 url 인 js 탭 구분 번호 및 사용자 닉네임 저장.  */
@@ -61,9 +79,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		System.out.println("afterConnectionEstablishd 메소드 실행 ");
 		
 		String curruentRoomNumber = (String) session.getAttributes().get("roomnumber");	// 세션 핸드 쉐이크 전, 즉 http socket 세션 과정 전 저장한 요청 방 번호.
-		
-		System.out.println("현재 생성된 session.getId() : " + session.getId());
-		System.out.println("현재 생성 요청 받은 방 번호 : " + curruentRoomNumber);
 		
 		/* 방 생성 또는 입장하는 동작 즉, 세션 객체 생성 시 현재 방 번호로 세션 객체 리스트를 담고 있는 HashMap 요소가 없다면 새로 생성, 있다면 기존 키 값 따른 추가.*/
 		if(sessionResource.roomWebsocks.get(curruentRoomNumber) == null)	/* 세션 객체 생성 당 시 만약 처음 생성이라면 무조건 방 생성 간주 로직. */	
