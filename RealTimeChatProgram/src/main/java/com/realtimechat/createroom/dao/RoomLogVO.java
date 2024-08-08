@@ -1,6 +1,6 @@
 package com.realtimechat.createroom.dao;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class RoomLogVO {
 	

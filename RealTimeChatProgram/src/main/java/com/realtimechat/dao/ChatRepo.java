@@ -34,7 +34,9 @@ public class ChatRepo implements IChatRepo{
 	@PostConstruct
 	void init() {
 		
+		String sqlLog = "delete from roomlogtbl";
 		String sql = "delete from waitingroomtbl";
+		jdbcTemplate.update(sqlLog);
 		jdbcTemplate.update(sql);
 	}
 	
@@ -239,11 +241,10 @@ public class ChatRepo implements IChatRepo{
 	/* WebSocketHandler 에서 직접적으로 호출하여 db의 테이블 'RooMLogTBL' 내 채팅 내용 저장. */
 	@Override
 	public void chatLog(RoomLogVO roomLogVO) {
-	
 		System.out.println("ChatRepo.chatLog() 실행");
 		
 		String insertSql = "insert into roomlogtbl values(?,?,?,?)";	
-		jdbcTemplate.update(insertSql, new Object[] {roomLogVO.getRomNum(), roomLogVO.getConverSationTime(), roomLogVO.getChatNickName(), roomLogVO.getChatContent()});	
+		jdbcTemplate.update(insertSql, new Object[] {roomLogVO.getRomNum(), new java.sql.Date(roomLogVO.getConverSationTime().getTime()), String.valueOf(roomLogVO.getChatNickName()), String.valueOf(roomLogVO.getChatContent())});	
 	}
 	 
 	 class watingRoomRowMapper implements RowMapper<WatingRoomVO>{

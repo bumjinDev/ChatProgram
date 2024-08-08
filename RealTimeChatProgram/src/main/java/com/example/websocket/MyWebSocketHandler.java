@@ -56,11 +56,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 	
 		/* 대화 내용 로그로 저장 */
 		LocalDate now = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-		String nowDate = now.format(formatter);
-		
-		LocalDate formattedLocalDate = LocalDate.parse(nowDate, formatter);
-		java.util.Date resDate = Date.from(formattedLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        String nowDate = now.format(formatter);
+        
+        LocalDate formattedLocalDate = LocalDate.parse(nowDate, formatter);
+        Date resDate = Date.valueOf(formattedLocalDate);
 
 		RoomLogVO roomLogVO = new RoomLogVO();
 		
