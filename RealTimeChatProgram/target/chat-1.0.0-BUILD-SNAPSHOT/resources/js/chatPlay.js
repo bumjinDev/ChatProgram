@@ -35,6 +35,7 @@ window.onload = function() {
             var chatvalue = inputChat.value; // 현재 페이지에서 사용자가 입력한 내용
             console.log("채팅 전달 내용: " + chatvalue);
             socket.send(chatvalue); // socket.send() : WebSocket 세션 통해 데이터 전송.
+            inputChat.value = "";
         });
     };
 

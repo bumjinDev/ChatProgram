@@ -25,12 +25,4 @@ public class SessionResource {
 	/* 'chatRepo.getChatRoom' 에서 사용되며 현재 채팅 방 페이지 요청 시 새로고침인지 아닌지 판별하기 위한
 	 * 각 HttpServlet ID 별 헤더 'referer' 저장하는 HashMap 컬렉션 */
 	public HashMap <String, String> refererList = new HashMap<String, String>();
-	
-//	/* sessionList : 현재 접속 중인 세션 ID 별 세션 객체, 모든 채팅 대상자에 대한 리스트 유지 목적. */
-//	public HashMap <String, WebSocketSession> sessionList = new HashMap <String, WebSocketSession>();
-//	
-//	/* 각 페이지 랜더링 및 탭 재 로드 시 닉네임 등을 브라우저 세션 단위(HttpServletRequest)의 id를 받아서 컨트롤러 빈에서 해당 번호로 찾아서 세션 내 닉네임 등 설정.
-//	 * 또한 각 세션 객체 별 세션 타임아웃을 정하는데 이유는 새로고침(ctrl+f5 또는 */
-//	public HashMap <String, WebSocketSession> httpSessionList = new HashMap<String, WebSocketSession>();
-//	
 }

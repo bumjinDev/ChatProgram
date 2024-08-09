@@ -135,10 +135,6 @@ public class ChatRepo implements IChatRepo{
 		
 		String httpRequestId = httpRequest.getRequestedSessionId();
 		
-//		System.out.println("디버깅 - 현재 요청에 대한 Referer 헤더 값 : " + httpRequest.getHeader("Referer"));
-//		System.out.println("디버깅 - 가장 최근 저장된 Referer 헤더 값 : " + sessionResource.refererList.get(httpRequestId) );
-		
-		
 		/* 우선 방이 있나 없나 부터 확인, 즉 대기방 페이지가 갱신이 안되서 이미 사라진 방 번호를 가지고 요청 했을 때 디비.(OutBoundException 예방) */
 		if(users.size() == 0) {
 			
@@ -189,8 +185,6 @@ public class ChatRepo implements IChatRepo{
 		
 		/* 현재 주어진 방 번호를 사용해서 현재 나간다고 했던 페이지 내 현재 이용자수 1 삭제 : 페이지 새로 고침이나 단순 나기기 요청이 아닌 나가기 요청을 버튼을 눌르면 바로 페이지 인원수가 페이지 대기방 목록에서 본인에게 보여야 하기 때문에
 		 * 여기서 db 내 -1 을 적용함. */
-//		String decreseSql = "update waitingroomtbl set CURRENTPEOPLE = CURRENTPEOPLE - 1 where romnum = ?";
-//		jdbcTemplate.update(decreseSql, new Object[] {roomNumber});
 		
 		/* 지정된 방 내 현재 인원수가 0일 경우 해당 방에 해당하는 튜플을 삭제하기 위해 해당 방 정보 조회 쿼리 */
 		String selectSql = "select * from waitingroomtbl where ROMNUM = ?";
@@ -206,25 +200,8 @@ public class ChatRepo implements IChatRepo{
 		pathCurrentPeople(roomNumber, watingRoomVO.getCurrentPeople() - 1 , false);
 		System.out.println("조회된 방 번호 : " + roomNumber + ", 방 인원수 : " + watingRoomVO.getCurrentPeople());
 		
-//		if(watingRoomVO.getCurrentPeople() <= 0) {
-//			
-//			System.out.println("삭제되는 방 번호 : " + roomNumber);
-//			String deleteQuery = "delete from waitingroomtbl where ROMNUM = ?";
-//			jdbcTemplate.update(deleteQuery, new Object[] {roomNumber});
-//		}
 	}
-//	
-//	/* 사용자가 새로고침이나 정상적인 페이지 종료가 아닌 임의 종료를 확인하기 위한 메소드, 'afterConnectionClosed' 에서 호출하여 만약 비교하여
-//	 * 결과 값이 다르면 'afterConnectionClosed' 에서 'exitChatPage' 호출  */
-//	@Override
-//	public int compareCurrentUsers(int roomNumber) {
-//		
-//		String selectSql = "select * from waitingroomtbl where ROMNUM = ?";
-//		WatingRoomVO watingRoomVO = jdbcTemplate.queryForObject(selectSql, new Object[] {roomNumber}, new watingRoomRowMapper());
-//		
-//		return watingRoomVO.getCurrentPeople();
-//	}
-	
+
 	/* 방 번호 랜덤으로 뽑기. */
 	 public static int generateUniqueRandomNumber(List<Integer> usedNumbers, int min, int max) {
 		 Random random = new Random();
