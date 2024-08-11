@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.SessionResource.SessionResource;
+import com.realtimechat.SessionResource.SessionResource;
 import com.realtimechat.chatroom.model.ChatRoomPeopleVO;
 import com.realtimechat.createroom.model.RoomLogVO;
 import com.realtimechat.main.model.MainPageVO;

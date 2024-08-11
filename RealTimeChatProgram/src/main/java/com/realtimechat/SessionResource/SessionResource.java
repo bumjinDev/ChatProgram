@@ -1,4 +1,4 @@
-package com.SessionResource;
+package com.realtimechat.SessionResource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
