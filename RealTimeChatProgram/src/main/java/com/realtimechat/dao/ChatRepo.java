@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.SessionResource.SessionResource;
 import com.realtimechat.chatroom.model.ChatRoomPeopleVO;
-import com.realtimechat.createroom.dao.RoomLogVO;
+import com.realtimechat.createroom.model.RoomLogVO;
 import com.realtimechat.main.model.MainPageVO;
 import com.realtimechat.waitroom.model.WatingRoomVO;
 

@@ -66,7 +66,7 @@
 			<input type="text" id="inputchat"><button id="chatbtn" class="chatbtn">채팅 입력</button>
 		</div>
 	</div>
-	<script type="text/javascript" src="../js/chatPlay.js?ver=3.4"></script>
+	<script type="text/javascript" src="../js/chatPlay.js?ver=3.7"></script>
 		<!-- webSocket 을 활용한 실시간 채팅 페이지 구현. -->
 </body>
 </html>

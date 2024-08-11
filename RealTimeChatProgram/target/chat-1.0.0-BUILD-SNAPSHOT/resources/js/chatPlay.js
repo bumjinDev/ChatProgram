@@ -18,7 +18,7 @@ window.onload = function() {
     console.log("방 번호: ", roomnumber);
 
     var socket = new WebSocket("ws://43.202.178.156:8181/chat/ws?roomnumber=" + roomnumber.value + "&username=" + nickname.value);
-
+    
     socket.onopen = function(event) {
         console.log("세션 성립!");
 
@@ -35,7 +35,6 @@ window.onload = function() {
             var chatvalue = inputChat.value; // 현재 페이지에서 사용자가 입력한 내용
             console.log("채팅 전달 내용: " + chatvalue);
             socket.send(chatvalue); // socket.send() : WebSocket 세션 통해 데이터 전송.
-            inputChat.value = "";
         });
     };
 
@@ -66,6 +65,11 @@ window.onload = function() {
     socket.onerror = function(errorEvent) {
         alert("연결 오류 발생. 페이지 재 접속 하세요. 채팅 대기방 페이지로 이동합니다. ");
         window.location.href = "../loadWaitPage"; // WebSocket 세션 객체 생성 실패 시 바로 채팅 대기방 페이지 이동.
+    };
+
+    socket.onclose = () => {
+
+        alert("웹 소켓 세션 연결이 종료되었습니다.");
     };
 
     /* 새로 고침 하면 js 컨텍스트 초기화 되기 전에 새로 고침 이벤트 처리 보장을 위해

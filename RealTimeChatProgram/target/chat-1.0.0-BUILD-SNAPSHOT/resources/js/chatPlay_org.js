@@ -67,6 +67,11 @@ window.onload = function() {
         window.location.href = "../loadWaitPage"; // WebSocket 세션 객체 생성 실패 시 바로 채팅 대기방 페이지 이동.
     };
 
+    socket.onclose = () => {
+
+        alert("웹 소켓 세션 연결이 종료되었습니다.");
+    };
+
     /* 새로 고침 하면 js 컨텍스트 초기화 되기 전에 새로 고침 이벤트 처리 보장을 위해
     웹 페이지 리소스(html, css) 만 닫고 서버로 새로고침 이벤트 처리 후에 랜더링 받고 나서
     js 컨텍스트를 종료하는 순서로 동작하기에 가능함.  */

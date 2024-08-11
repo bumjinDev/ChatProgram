@@ -35,13 +35,13 @@
 	<context:component-scan base-package="com.SessionResource"/>
 	
 	<!-- WebSock 클래스 DI 구현 -->
-	<context:component-scan base-package="com.example.websocket"/>
+	<context:component-scan base-package="com.realtimechat.websocket"/>
 	
-	<bean id="myWebSocketHandler" class="com.example.websocket.MyWebSocketHandler"/>
+	<bean id="myWebSocketHandler" class="com.realtimechat.websocket.MyWebSocketHandler"/>
 	<websocket:handlers>
 	  	<websocket:mapping path="/ws" handler="myWebSocketHandler"/>
 	  	<websocket:handshake-interceptors>
-        	<bean class="com.example.websocket.MyHandshakeInterceptor"/>
+        	<bean class="com.realtimechat.websocket.MyHandshakeInterceptor"/>
    		</websocket:handshake-interceptors>
 	</websocket:handlers>
 	
