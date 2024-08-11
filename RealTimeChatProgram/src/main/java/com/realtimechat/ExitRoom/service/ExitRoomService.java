@@ -1,5 +1,9 @@
 package com.realtimechat.ExitRoom.service;
 
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +17,11 @@ public class ExitRoomService implements IExitRoomService{
 	ChatRepo chatRepo; 
 	
 	@Override
-	public void exitChatRoom(int roomMax) {
+	public void exitChatRoom(int roomMax, HttpSession httpSession) {
+		
 		System.out.println("ExitRoomService.exitChatRoom() 실행! ");
 		
-		chatRepo.exitChatPage(roomMax);
+		
+		chatRepo.exitChatPage(roomMax, httpSession);
 	}
 }

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,7 +69,7 @@ public class ChatProgramController {
 		
 		System.out.println("메소드 'exitChatPage()' 호출! ");
 		
-		exitRoomService.exitChatRoom(roomNumber);
+		exitRoomService.exitChatRoom(roomNumber, httpRequest.getSession());
 		
 		System.out.println("메소드 'loadWaitPage()' 리다이렉트 실행! \n");
 	
@@ -99,6 +100,8 @@ public class ChatProgramController {
 		/* 닉네임 및 방 목록 정보들을 Model 객체 내 저장 및 반환. */
 		model.addAttribute("nickName", username);	// 닉네임 저장.
 		model.addAttribute("loadWaitRooms", loadWaitRooms);
+		
+		sessionResource.refererList.put(httpRequest.getSession().getId(), httpRequest.getHeader("Referer"));
 		
 		return "waitpage";
 	}

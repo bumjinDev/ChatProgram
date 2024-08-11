@@ -24,10 +24,7 @@ public class MyHandshakeInterceptor implements HandshakeInterceptor {
        HashMap<String, Object>  socketInfo = extractHttpSessionIdFromRequest(request);
        attributes.put("roomnumber", (String) socketInfo.get("roomnumber"));
        attributes.put("username", (String) socketInfo.get("username"));
-       attributes.put("HTTP_SESSION", (HttpSession)socketInfo.get("HTTP_SESSION"));
-       
-       System.out.println("roomnumber : " + attributes.get("roomnumber"));
-       System.out.println("username : " + attributes.get("username"));
+       attributes.put("httpSession", socketInfo.get("httpSession"));
        
        return true;
     }
@@ -45,8 +42,7 @@ public class MyHandshakeInterceptor implements HandshakeInterceptor {
         
         socketInfo.put("roomnumber", roomnumber);
         socketInfo.put("username", username);
-        
-        socketInfo.put("HTTP_SESSION", (Object) servletRequest.getServletRequest().getSession());
+        socketInfo.put("httpSession", servletRequest.getServletRequest().getSession());
         
         return socketInfo;
     }

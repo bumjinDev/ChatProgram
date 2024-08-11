@@ -75,7 +75,7 @@ public class ChatRepo implements IChatRepo{
 
 	/* 세션 생성 또는 변경 시 개수 적용. */
 	@Override
-	public void pathCurrentPeople(int roomNumber, int people, boolean bool) {
+	public void pathCurrentPeople(int roomNumber, int people, HttpSession httpSession) {
 		
 		System.out.println("pathCurrentPeople() 실행");
 		System.out.println("방 번호 : " + roomNumber + ", 방 번호 내 수정 요청 인원 수 : " + people);
@@ -89,14 +89,15 @@ public class ChatRepo implements IChatRepo{
 		WatingRoomVO watingRoomVO = jdbcTemplate.queryForObject(selectSql, new Object[] {roomNumber}, new watingRoomRowMapper());
 		
 		System.out.println("update 직후 해당 방의 현재 인원 수 : " + watingRoomVO.getCurrentPeople());
-		
+		System.out.println("(Boolean) httpSession.getAttribute('boolRefer') : " + (Boolean) httpSession.getAttribute("boolRefer"));
 		/* 나가기 요청이나 혹은 단순 x 표시 등을 눌러서 페이지를 나갈 시에 방 인원수가 없다면 방을 페지 하는게 맞으나 새로 고침이면 해당 방 튜플 하면 안됨!. */
-		if (watingRoomVO.getCurrentPeople() == 0 && !bool) {
+		if (watingRoomVO.getCurrentPeople() == 0 && (Boolean) httpSession.getAttribute("boolRefer") == false) {
 			
-			System.out.println("현재 세션 삭제 요청 시 새로고침이 아니므로(bool : " + bool+ ")해당 테이블 삭제 쿼리 시작");
-		    
+			System.out.println("새로고침 유청이 아니므로 해당 테이블 " +  roomNumber + "번 삭제 : ");
+			
 			String deleteSql = "delete from waitingroomtbl where romnum = ?";
 		    int res = jdbcTemplate.update(deleteSql, new Object[] {roomNumber});
+		    
 		    System.out.println("영향 받은 쿼리 개수 : " + res);
 		}
 	}
@@ -125,6 +126,7 @@ public class ChatRepo implements IChatRepo{
 	public ChatRoomPeopleVO getChatRoom(int roomNumber, HttpServletRequest httpRequest) {
 		System.out.println("ChatRepo.getChatRoom() 호출!");
 		
+		
 		ChatRoomPeopleVO chatRoomPeopleVO = new ChatRoomPeopleVO();
 		
 		/* 요청된 테이블 번호를 기준으로 해당 테이블의 현재 참여 인원 수 및 최대 인원수를 파악. */
@@ -134,6 +136,9 @@ public class ChatRepo implements IChatRepo{
 		users = jdbcTemplate.queryForList(selectRoom, new Object[] {roomNumber});
 		
 		String httpRequestId = httpRequest.getRequestedSessionId();
+		
+		System.out.println("httpRequest.getHeader('Referer') : " + httpRequest.getHeader("Referer") + "\n" + 
+				"sessionResource.refererList.get(httpRequestId) : " + sessionResource.refererList.get(httpRequestId));
 		
 		/* 우선 방이 있나 없나 부터 확인, 즉 대기방 페이지가 갱신이 안되서 이미 사라진 방 번호를 가지고 요청 했을 때 디비.(OutBoundException 예방) */
 		if(users.size() == 0) {
@@ -150,6 +155,7 @@ public class ChatRepo implements IChatRepo{
 			chatRoomPeopleVO.setRoomPeople(Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString()));
 			chatRoomPeopleVO.setIsAllowed(true);
 			
+			httpRequest.getSession().setAttribute("boolRefer", true);	// 현재 메소드에서는 DBMS 에 직접 접근하여 채팅 방 내 참져자 수 DBMS 조작하지 않고 WebSocket 내 HttpSession()으로만 설정(랜더링 과정 중 설정해 버리면 실제로 Websocket 세션 생성 실패 시 등에 동기에러 날 수도 있음)
 			sessionResource.refererList.put(httpRequestId, httpRequest.getHeader("Referer"));
 			
 		/* 새로 고침 아닌 새로 방 입장 시 확인하는 if 문, 인원수가 적절하면 허용. */
@@ -158,9 +164,10 @@ public class ChatRepo implements IChatRepo{
 			
 			/* jsp 페이지 랜더링 시에 만약에 새로 고침이 아니라면 현재 db 내 인원수에 +1 을 하여 jsp 랜더링 하여 브라우저에서 랜더링 받은 직후의 값과 소켓 생성 시 값을 일치시키고
 			 * 만약에 단순 페이지 새로고침이면 '+1' 을 하지 않음으로써 현재 인원수 그대로 jsp 페이지 내 랜더링 하게 끔 함. */
-			chatRoomPeopleVO.setRoomPeople(Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString())+1);
+			chatRoomPeopleVO.setRoomPeople(Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString()) +1);
 			chatRoomPeopleVO.setIsAllowed(true);	// 추가적으로 해당 채팅 페이지에 접속 가능.
 			
+			httpRequest.getSession().setAttribute("boolRefer", false);
 			sessionResource.refererList.put(httpRequestId, httpRequest.getHeader("Referer"));		/* 현재 브라우저가 페이지 방문 완료 했으니 헤더 Referer 갱신! */
 			
 		} else if(Integer.parseInt(users.get(0).get("CURRENTPEOPLE").toString())+1 >= Integer.parseInt(users.get(0).get("MAXPEOPLE").toString())){	/* 현재 요청한 인원수를 받으면 안된다면 false 적용. */
@@ -179,7 +186,7 @@ public class ChatRepo implements IChatRepo{
 	 */
 	
 	@Override
-	public void exitChatPage(int roomNumber) {
+	public void exitChatPage(int roomNumber, HttpSession httpSession) {
 		
 		System.out.println("exitChatPage() 호출");
 		
@@ -197,7 +204,7 @@ public class ChatRepo implements IChatRepo{
 		 * 또한 0명이 되면 방 목록을 삭제하는데 이땨 단순 페이지 재 로딩이면 어차피 세션 맺을 때 동일한 방 번호로 인원 수 추가 해야 되는데 이때 나갈 때 무조건 0 명이라고 방 지워버리면
 		 * 재 세션 맺을 때 에러 뜨기 때문에..이 로직은 websocket 핸들러에서 처리한다.
 		 * */
-		pathCurrentPeople(roomNumber, watingRoomVO.getCurrentPeople() - 1 , false);
+		pathCurrentPeople(roomNumber, watingRoomVO.getCurrentPeople() - 1 , httpSession);
 		System.out.println("조회된 방 번호 : " + roomNumber + ", 방 인원수 : " + watingRoomVO.getCurrentPeople());
 		
 	}

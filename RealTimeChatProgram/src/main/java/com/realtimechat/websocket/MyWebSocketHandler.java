@@ -13,6 +13,8 @@ import com.realtimechat.Log.model.RoomLogVO;
 import com.realtimechat.SessionResource.SessionResource;
 import com.realtimechat.dao.ChatRepo;
 import java.util.ArrayList;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -87,8 +89,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		sessionResource.roomWebsocks.get(curruentRoomNumber).add(session);
 		System.out.println("sessionResource.roomWebsocks.get(" + curruentRoomNumber + ").size : " + sessionResource.roomWebsocks.get(curruentRoomNumber).size());
 		
-		chatRepo.pathCurrentPeople(Integer.parseInt(curruentRoomNumber),sessionResource.roomWebsocks.get(curruentRoomNumber).size(), false);
+		chatRepo.pathCurrentPeople(Integer.parseInt(curruentRoomNumber),sessionResource.roomWebsocks.get(curruentRoomNumber).size(), (HttpSession) session.getAttributes().get("httpSession"));
 		System.out.println("세션 생성 시점에서의 현재 채팅 방 이용자 수 : " + sessionResource.roomWebsocks.get(curruentRoomNumber).size());
+	
+		HttpSession httpSession = (HttpSession) session.getAttributes().get("httpSession");
+		httpSession.setAttribute("boolRefer", false);
 	}
 	
 	/* index.js 에서 맺은 세션은 페이지 새로고침 뿐만 아니라 페이지 랜더링 시에서 js 입장에서는 컨텍스트 환경이 변경되므로 페이지 이동 마다 브라우저가 웹 소켓을 종료한다. */
@@ -125,21 +130,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
 		
 		if (httpSession != null) {
-			
-	        Boolean refresh = (Boolean) httpSession.getAttribute("refresh");
-	        System.out.println("Boolean refresh : " + refresh);
-	        
-	        if (refresh != null && refresh) {  /* 현재 페이지가 새로고침일 때 만약에 현재 방 내 인원수가 혼자일 때 현재 방 인원수가 0으로 바뀌엇다고 그 즉시 방 삭제 안되게 하기 위함. */
-	            
-	           chatRepo.pathCurrentPeople(Integer.parseInt(closeSessionRoomNum), sessionResource.roomWebsocks.get(closeSessionRoomNum).size(), true);
-	           System.out.println("새로 고침 됐어요 !");
-	        } else
-	    		sessionResource.refererList.put(httpSession.getId() , "none");
-	        
-	        httpSession.setAttribute("refresh", false);
-	        System.out.println("새로 고침 false 저장 결과 :  " + httpSession.getAttribute("refresh"));
+			chatRepo.pathCurrentPeople(Integer.parseInt(closeSessionRoomNum), sessionResource.roomWebsocks.get(closeSessionRoomNum).size(), (HttpSession) session.getAttributes().get("httpSession"));
 	    }
-		
 		
 		if(sessionResource.roomWebsocks.get(closeSessionRoomNum).size() == 0)	// 해당 방 번호 내 세션 리스트가 없을 경우 아에 방 번호 리스트 HashMap 삭제.		
 			sessionResource.roomWebsocks.remove(closeSessionRoomNum);	// 현재 방 번호 키 에 대한 세션 리스트가 없으니 해당 키 셋 삭제, 채팅 했을 때 동시에 전달 받는 리스트 삭제.

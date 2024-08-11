@@ -8,7 +8,6 @@ window.onload = function() {
     var chatBtn = document.getElementById("chatbtn"); // 사용자 채팅 전송 버튼.
 
     var pgPlag = 1;
-
     /* 나가기 버튼 구현. */
     var exitChat = document.getElementById("exitchat"); // 나가기 버튼
     var roomnumber = document.getElementById("roomNumber"); // 방 번호 요소
@@ -24,8 +23,6 @@ window.onload = function() {
 
         exitChat.addEventListener("click", function() {
             alert("현재 방을 나갑니다.");
-            
-            pgPlag = 0;
 
             window.location.href = "../exitChatPage/" + roomnumber.value;
         });
@@ -71,25 +68,4 @@ window.onload = function() {
 
         alert("웹 소켓 세션 연결이 종료되었습니다.");
     };
-
-    /* 새로 고침 하면 js 컨텍스트 초기화 되기 전에 새로 고침 이벤트 처리 보장을 위해
-    웹 페이지 리소스(html, css) 만 닫고 서버로 새로고침 이벤트 처리 후에 랜더링 받고 나서
-    js 컨텍스트를 종료하는 순서로 동작하기에 가능함.  */
-    window.addEventListener('beforeunload', function (event) {
-
-        if(pgPlag === 1){
-
-            alert("새로고침!");
-            // 새로고침을 감지하고 서버로 알림
-            fetch('../refresh', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ refresh: true })
-            });
-        }
-
-        pgPlag = 1;
-    });
 };
