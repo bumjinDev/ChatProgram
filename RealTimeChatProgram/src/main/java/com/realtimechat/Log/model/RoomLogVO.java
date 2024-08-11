@@ -1,4 +1,4 @@
-package com.realtimechat.createroom.model;
+package com.realtimechat.Log.model;
 
 import java.sql.Date;
 

@@ -9,8 +9,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.realtimechat.Log.model.RoomLogVO;
 import com.realtimechat.SessionResource.SessionResource;
-import com.realtimechat.createroom.model.RoomLogVO;
 import com.realtimechat.dao.ChatRepo;
 import java.util.ArrayList;
 import javax.servlet.http.HttpSession;
