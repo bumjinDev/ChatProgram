@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.realtimechat.ExitRoomService.service.ExitRoomService;
+import com.realtimechat.ExitRoom.service.ExitRoomService;
 import com.realtimechat.SessionResource.SessionResource;
 import com.realtimechat.chatroom.model.ChatRoomPeopleVO;
 import com.realtimechat.chatroom.service.LoadChatRoomService;
 import com.realtimechat.createroom.service.CreateRoomService;
+
 import com.realtimechat.main.model.MainPageVO;
 import com.realtimechat.main.service.MainPageService;
 import com.realtimechat.waitroom.model.WatingRoomVO;

@@ -1,4 +1,4 @@
-package com.realtimechat.ExitRoomService.service;
+package com.realtimechat.ExitRoom.service;
 
 public interface IExitRoomService {
 
