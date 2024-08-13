@@ -56,7 +56,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		for(WebSocketSession webSocket : lists)
 			webSocket.sendMessage(sendMessage);
 	
-		/* 대화 내용 로그로 저장 */
+		/* 대화 내용을 로그로써 저장 */
 		LocalDate now = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         String nowDate = now.format(formatter);
@@ -81,7 +81,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		System.out.println("afterConnectionEstablishd 메소드 실행 ");
 		
 		String curruentRoomNumber = (String) session.getAttributes().get("roomnumber");	// 세션 핸드 쉐이크 전, 즉 http socket 세션 과정 전 저장한 요청 방 번호.
-		
 		/* 방 생성 또는 입장하는 동작 즉, 세션 객체 생성 시 현재 방 번호로 세션 객체 리스트를 담고 있는 HashMap 요소가 없다면 새로 생성, 있다면 기존 키 값 따른 추가.*/
 		if(sessionResource.roomWebsocks.get(curruentRoomNumber) == null)	/* 세션 객체 생성 당 시 만약 처음 생성이라면 무조건 방 생성 간주 로직. */	
 			sessionResource.roomWebsocks.put(curruentRoomNumber, new ArrayList<WebSocketSession>());
@@ -95,7 +94,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("httpSession");
 		httpSession.setAttribute("boolRefer", false);
 	}
-	
 	/* index.js 에서 맺은 세션은 페이지 새로고침 뿐만 아니라 페이지 랜더링 시에서 js 입장에서는 컨텍스트 환경이 변경되므로 페이지 이동 마다 브라우저가 웹 소켓을 종료한다. */
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -117,15 +115,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 				sessionResource.roomWebsocks.get(closeSessionRoomNum).remove(i);
 			}
 		}
-		/* 삭제하는 로직 !
-		 * 1. 페이지 나가기 리다에렉션 요청 : 페이지 랜더링 데이터를 받은 후에 close -> establised 메소드 호출 될 때 어차피 exitChatpge() 호출 해서 내부적으로
-		 * 							db 내 -1을 먼저 한다.(왠나면 페이지 랜더링 해서 내 브라우저에 보인 후에 close 를 하기 때문에 인원 수 실시간 갱신이 필요하므로!)
-		 * 							그리고 cloase 웹소켓 내부적으로 close 발생해서 db 테이블 갱신(두번 하는 이유는 해당 close 메소드는 모든 소켓 종료 시 "공통적으로" 호출되기 때문에 어차피 해야됨)
-		 * 2. 단순 브라우저 또는 탭 x 버튼 : closed 메소드 호출 후 close 내부적으로 갱신된 리스트를 db 내 직접 적용한다.
-		 * 3. 새로고침 : 이게 제일 문제다! closed 메소드 호출 입장에서 단순 x 눌러서 나가기 요청인지 아니면 리다이렉션으로 나가기 요청인지, 새로고침
-		 * 		인지 분간이 안되기 때문에 만약에 위 리다이렉션 또는 x 표시 로직 그대로 db 내 이용자수가 0이라고 지워버리면 새로고침 시 에러 뜬다..
-		 * 		고로 브라우저에서 리프레시(새로고침) 할 때 를 구분하여 진짜 리프레쉬 
-		 * */
 		
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
 		

@@ -30,19 +30,14 @@ public class ChatProgramController {
 	
 	@Autowired
 	MainPageService mainPageSerivce;
-	
 	@Autowired
 	CreateRoomService createRoomService;
-	
 	@Autowired
 	LoadChatRoomService loadChatRoomService;
-	
 	@Autowired
 	WatingRoomService watingRoomService;
-	
 	@Autowired
 	ExitRoomService exitRoomService;		
-	
 	@Autowired
 	SessionResource sessionResource;	// singleton 활용하여 닉네임 설정. 
 	
@@ -68,10 +63,7 @@ public class ChatProgramController {
 	public String exitChatPage(@PathVariable("roomNumber")int roomNumber, HttpServletRequest httpRequest) {
 		
 		System.out.println("메소드 'exitChatPage()' 호출! ");
-		
 		exitRoomService.exitChatRoom(roomNumber, httpRequest.getSession());
-		
-		System.out.println("메소드 'loadWaitPage()' 리다이렉트 실행! \n");
 	
 		return "redirect:/loadWaitPage";
 	}

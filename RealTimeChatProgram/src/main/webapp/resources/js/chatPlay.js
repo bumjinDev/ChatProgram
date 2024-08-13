@@ -19,18 +19,19 @@ window.onload = function() {
     var socket = new WebSocket("ws://localhost:8181/chat/ws?roomnumber=" + roomnumber.value + "&username=" + nickname.value);
 
     socket.onopen = function(event) {
+        
         console.log("세션 성립!");
 
         exitChat.addEventListener("click", function() {
-            alert("현재 방을 나갑니다.");
 
+            alert("현재 방을 나갑니다.");
             window.location.href = "../exitChatPage/" + roomnumber.value;
         });
 
         /* 채팅 input 태그 내 데이터 입력한 데이터를 전송하기 위한 메서드 */
         chatBtn.addEventListener("click", function() {
+
             var chatvalue = inputChat.value; // 현재 페이지에서 사용자가 입력한 내용
-            console.log("채팅 전달 내용: " + chatvalue);
             socket.send(chatvalue); // socket.send() : WebSocket 세션 통해 데이터 전송.
         });
     };

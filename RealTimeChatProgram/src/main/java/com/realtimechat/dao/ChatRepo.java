@@ -126,9 +126,7 @@ public class ChatRepo implements IChatRepo{
 	public ChatRoomPeopleVO getChatRoom(int roomNumber, HttpServletRequest httpRequest) {
 		System.out.println("ChatRepo.getChatRoom() 호출!");
 		
-		
 		ChatRoomPeopleVO chatRoomPeopleVO = new ChatRoomPeopleVO();
-		
 		/* 요청된 테이블 번호를 기준으로 해당 테이블의 현재 참여 인원 수 및 최대 인원수를 파악. */
 		String selectRoom = "select CURRENTPEOPLE, MAXPEOPLE from waitingroomtbl where ROMNUM = ?";
 		
@@ -136,10 +134,6 @@ public class ChatRepo implements IChatRepo{
 		users = jdbcTemplate.queryForList(selectRoom, new Object[] {roomNumber});
 		
 		String httpRequestId = httpRequest.getRequestedSessionId();
-		
-		System.out.println("httpRequest.getHeader('Referer') : " + httpRequest.getHeader("Referer") + "\n" + 
-				"sessionResource.refererList.get(httpRequestId) : " + sessionResource.refererList.get(httpRequestId));
-		
 		/* 우선 방이 있나 없나 부터 확인, 즉 대기방 페이지가 갱신이 안되서 이미 사라진 방 번호를 가지고 요청 했을 때 디비.(OutBoundException 예방) */
 		if(users.size() == 0) {
 			
@@ -175,7 +169,6 @@ public class ChatRepo implements IChatRepo{
 			
 			chatRoomPeopleVO.setRoomPeople(11);		// 참여 인원수 변동 없음. (VO 객체 채우기 위한 가비지 값)
 			chatRoomPeopleVO.setIsAllowed(false);	// 결과 값 거짓으로 변경.
-			
 		} 
 		return chatRoomPeopleVO;
 	}	
@@ -197,13 +190,6 @@ public class ChatRepo implements IChatRepo{
 		String selectSql = "select * from waitingroomtbl where ROMNUM = ?";
 		WatingRoomVO watingRoomVO = jdbcTemplate.queryForObject(selectSql, new Object[] {roomNumber}, new watingRoomRowMapper());
 		
-		/* 동기화 : 나가기 버튼 누를 시 순서 상 페이지 랜더링 과중 중의 현재 레포지토리 호출 후에 세션 close 작업(나기기 이므로 세션 재 생성은 하지 않음)이 발생하는데
-		 * 이때 나가기 버튼을 실행한다면 "페이지 랜더링 받는 대기방 목록에서 db 테이블 통해 해당 방 목록을 보여주므로" 페이지 랜더링 작업 내에서 db 쿼리 작업이 일어 나야 됨.
-		 * 그러므로 나가기 버튼을 누른 것 한정으로는 레포지토리에서 db 테이블 작업을 우선 한 다음에 특수한 파라메터 값(exitChatPage) 존재 여부 따라 단순 페이지 재 로딩인지
-		 * 아니면 진짜 나가기 버튼이면 websocektcloased 에서 db 쿼리 작업 -1을 하지 않음
-		 * 또한 0명이 되면 방 목록을 삭제하는데 이땨 단순 페이지 재 로딩이면 어차피 세션 맺을 때 동일한 방 번호로 인원 수 추가 해야 되는데 이때 나갈 때 무조건 0 명이라고 방 지워버리면
-		 * 재 세션 맺을 때 에러 뜨기 때문에..이 로직은 websocket 핸들러에서 처리한다.
-		 * */
 		pathCurrentPeople(roomNumber, watingRoomVO.getCurrentPeople() - 1 , httpSession);
 		System.out.println("조회된 방 번호 : " + roomNumber + ", 방 인원수 : " + watingRoomVO.getCurrentPeople());
 		
