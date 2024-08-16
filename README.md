@@ -42,8 +42,8 @@ RealTimeChatProgram
        	│        └─ model
         ├─ dao
         ├─ createroom
-        │       └─ service
-        ├─ controller
+        │        └─ service
+        └ controller
                  └─ chatroom
                        ├─ service
                        └─ model
