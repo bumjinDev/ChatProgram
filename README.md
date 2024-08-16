@@ -64,7 +64,12 @@ RealTimeChatProgram
 ![first user](https://github.com/user-attachments/assets/0881862b-7f02-4183-9e98-80da9f0f1d94)
 <br><br>
 [대기방 페이지]
-   + 사용자가 닉네임 입력 후 최초 접속되는 페이지로 전체 활성화된 채팅방 목록 확인 가능합니다.
-   + 각 채팅방을 선택적하여 접속 가능합니다.
-   + 새로운 채팅 방 생성 가능합니다.
+   + 사용자가 닉네임을 입력한 후 최초로 접속하는 페이지입니다.
+   + 전체 활성화된 채팅방 목록을 확인할 수 있습니다.
+   + 각 채팅방을 선택하여 접속할 수 있습니다.
+   + 새로운 채팅 방을 생성할 수 있습니다.
+
+![first user](https://github.com/user-attachments/assets/4a4c1ef9-51b6-450c-9693-a83bb1c2a63e
+<br>
+<br>
 
