@@ -41,10 +41,10 @@ RealTimeChatProgram
        	│        ├─ service
        	│        └─ model
          ├─ dao
-         ├─ createroom
-       	│         └─ service
-         ├─ controller
-         └─ chatroom
+      ├─ createroom
+       	│        └─ service
+      ├─ controller
+      └─ chatroom
        	        ├─ service
        	        └─ model
 </pre>
