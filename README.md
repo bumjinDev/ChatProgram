@@ -36,16 +36,16 @@ RealTimeChatProgram
        	│     ├─ service
        	│     └─ model
        	├─ Log
-      	│    └─ model
+      	│     └─ model
        	├─ ExitRoom
        	│        ├─ service
        	│        └─ model
          ├─ dao
-      ├─ createroom
+         ├─ createroom
        	│        └─ service
-      ├─ controller
-      └─ chatroom
-       	        ├─ service
-       	        └─ model
+         ├─ controller
+         └─ chatroom
+       	         ├─ service
+       	         └─ model
 </pre>
 <br><br>
