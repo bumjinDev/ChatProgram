@@ -62,7 +62,7 @@ RealTimeChatProgram
    + 유효성 검사 로직 적용하여 닉네임 미 입력 시 실시간 채팅 서비스 제한 됩니다.
      
 ![first user](https://github.com/user-attachments/assets/0881862b-7f02-4183-9e98-80da9f0f1d94)
-
+<br>
 [대기방 페이지]
    + 사용자가 닉네임 입력 후 최초 접속되는 페이지로 전체 활성화된 채팅방 목록 확인 가능합니다.
    + 각 채팅방을 선택적하여 접속 가능합니다.
