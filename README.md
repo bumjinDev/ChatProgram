@@ -69,7 +69,7 @@ RealTimeChatProgram
    + 각 채팅방을 선택하여 접속할 수 있습니다.
    + 새로운 채팅 방을 생성할 수 있습니다.
 
-![first user](https://github.com/user-attachments/assets/4a4c1ef9-51b6-450c-9693-a83bb1c2a63e
+![first user](https://github.com/user-attachments/assets/4a4c1ef9-51b6-450c-9693-a83bb1c2a63e)
 <br>
 <br>
 
