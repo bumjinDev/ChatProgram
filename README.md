@@ -45,7 +45,7 @@ RealTimeChatProgram
         │        └─ service
         └─ controller
                  └─ chatroom
-                       ├─ service
-                       └─ model
+                         ├─ service
+                         └─ model
 </pre>
 <br><br>
