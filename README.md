@@ -40,12 +40,12 @@ RealTimeChatProgram
        	├─ ExitRoom
        	│        ├─ service
        	│        └─ model
-         ├─ dao
-         ├─ createroom
-         │        └─ service
-         ├─ controller
-                  └─ chatroom
-                        ├─ service
-                        └─ model
+        ├─ dao
+        ├─ createroom
+        │       └─ service
+        ├─ controller
+                 └─ chatroom
+                       ├─ service
+                       └─ model
 </pre>
 <br><br>
