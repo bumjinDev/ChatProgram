@@ -60,6 +60,7 @@ RealTimeChatProgram
 [초기화면]
    + 서비스 접속 초기화면으로 사용자 닉네임 설정 시 실시간 채팅 접속 가능합니다.
    + 유효성 검사 로직 적용하여 닉네임 미 입력 시 실시간 채팅 서비스 제한 됩니다.
+     
 ![first user](https://github.com/user-attachments/assets/0881862b-7f02-4183-9e98-80da9f0f1d94)
 
 [대기방 페이지]
